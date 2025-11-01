@@ -28,6 +28,11 @@ class StudentAnswerController extends Controller
             ], 422);
         }
 
+        /**
+         * SECURITY NOTE: Plain text password comparison per requirements.
+         * Students use separate auth system from Laravel Users.
+         * This is NOT recommended for production systems.
+         */
         $student = Student::where('email', $request->student_email)
             ->where('password', $request->student_password)
             ->first();

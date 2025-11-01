@@ -37,7 +37,7 @@ class StudentResource extends Resource
                     ->required(fn ($context) => $context === 'create')
                     ->maxLength(255)
                     ->dehydrated(fn ($state) => filled($state))
-                    ->helperText('Plain text password - will be stored as entered'),
+                    ->helperText('⚠️ SECURITY WARNING: Plain text password - stored as entered (per requirements)'),
                 Forms\Components\TextInput::make('student_id')
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
