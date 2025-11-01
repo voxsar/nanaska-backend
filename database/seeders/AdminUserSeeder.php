@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder

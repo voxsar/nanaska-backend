@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'n8n' => [
+        'upload_url' => env('N8N_UPLOAD_URL'),
+        'marking_url' => env('N8N_MARKING_URL'),
+    ],
+
 ];
