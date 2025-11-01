@@ -37,9 +37,10 @@ class TriggerMarkingJob implements ShouldQueue
 
         $n8nUrl = config('services.n8n.marking_url');
 
-        if (!$n8nUrl) {
+        if (! $n8nUrl) {
             Log::error('N8N Marking URL not configured');
             $this->studentAnswer->update(['status' => 'submitted']);
+
             return;
         }
 
@@ -55,13 +56,13 @@ class TriggerMarkingJob implements ShouldQueue
             ]);
 
             if ($response->successful()) {
-                Log::info('Marking triggered successfully for answer: ' . $this->studentAnswer->id);
+                Log::info('Marking triggered successfully for answer: '.$this->studentAnswer->id);
             } else {
-                Log::error('Failed to trigger marking for answer: ' . $this->studentAnswer->id);
+                Log::error('Failed to trigger marking for answer: '.$this->studentAnswer->id);
                 $this->studentAnswer->update(['status' => 'submitted']);
             }
         } catch (\Exception $e) {
-            Log::error('Error triggering marking: ' . $e->getMessage());
+            Log::error('Error triggering marking: '.$e->getMessage());
             $this->studentAnswer->update(['status' => 'submitted']);
         }
     }

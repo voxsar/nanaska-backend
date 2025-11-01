@@ -3,21 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MarkingPromptResource\Pages;
-use App\Filament\Resources\MarkingPromptResource\RelationManagers;
 use App\Models\MarkingPrompt;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MarkingPromptResource extends Resource
 {
     protected static ?string $model = MarkingPrompt::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+
+    protected static ?string $navigationGroup = 'Configuration';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

@@ -32,7 +32,7 @@ class StudentAnswerController extends Controller
             ->where('password', $request->student_password)
             ->first();
 
-        if (!$student) {
+        if (! $student) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid student credentials',

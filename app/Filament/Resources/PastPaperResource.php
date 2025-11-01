@@ -10,14 +10,16 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PastPaperResource extends Resource
 {
     protected static ?string $model = PastPaper::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+
+    protected static ?string $navigationGroup = 'Documents';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -108,6 +110,9 @@ class PastPaperResource extends Resource
     {
         return [
             RelationManagers\QuestionsRelationManager::class,
+            RelationManagers\QuestionPaperRelationManager::class,
+            RelationManagers\AnswerGuideRelationManager::class,
+            RelationManagers\MarkingGuideRelationManager::class,
         ];
     }
 

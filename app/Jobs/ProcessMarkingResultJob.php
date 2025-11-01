@@ -45,9 +45,9 @@ class ProcessMarkingResultJob implements ShouldQueue
 
             $studentAnswer->update(['status' => 'marked']);
 
-            Log::info('Marking result processed for answer: ' . $studentAnswer->id);
+            Log::info('Marking result processed for answer: '.$studentAnswer->id);
         } catch (\Exception $e) {
-            Log::error('Error processing marking result: ' . $e->getMessage());
+            Log::error('Error processing marking result: '.$e->getMessage());
             throw $e;
         }
     }

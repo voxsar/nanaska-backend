@@ -3,21 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PreSeenDocumentResource\Pages;
-use App\Filament\Resources\PreSeenDocumentResource\RelationManagers;
 use App\Models\PreSeenDocument;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PreSeenDocumentResource extends Resource
 {
     protected static ?string $model = PreSeenDocument::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Documents';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
