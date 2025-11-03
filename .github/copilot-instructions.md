@@ -14,12 +14,12 @@ This is a Laravel 10 backend with **Filament v3 admin panel** integration. The s
 - Admin panel configured in `app/Providers/Filament/AdminPanelProvider.php`
 - Uses **Amber** as primary color scheme
 - Auto-discovers resources in `app/Filament/Resources/` (create this directory when needed)
-- Admin access restricted to `miyuru@artslabcreatives.com` via `User::canAccessPanel()`
+- Admin access restricted to `admin@nanaska.com` via `User::canAccessPanel()`
 - User model implements `FilamentUser` contract in `app/Models/User.php`
 
 ### Authentication & Authorization  
-- Single admin user seeded via `AdminUserSeeder` with email `miyuru@artslabcreatives.com`
-- Password: `miyuru@artslabcreatives.com@123` (hardcoded in seeder)
+- Single admin user seeded via `AdminUserSeeder` with email `admin@nanaska.com`
+- Password: `admin@nanaska.com@123` (hardcoded in seeder)
 - Sanctum middleware protects API routes (`/api/user`)
 - Filament uses separate authentication middleware stack
 

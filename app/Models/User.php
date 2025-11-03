@@ -14,7 +14,7 @@ class User extends Authenticatable implements FilamentUser
 {
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->email === 'miyuru@artslabcreatives.com';
+        return $this->email === 'admin@nanaska.com';
     }
 
     use HasApiTokens, HasFactory, Notifiable;

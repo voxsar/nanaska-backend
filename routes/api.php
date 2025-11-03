@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\PastPaperController;
 use App\Http\Controllers\Api\StudentAnswerController;
+use App\Http\Controllers\Api\MarkingResultController;
+use App\Http\Controllers\Api\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +28,11 @@ Route::get('/past-papers/{id}/questions', [PastPaperController::class, 'question
 
 Route::post('/students/submit-answer', [StudentAnswerController::class, 'submit']);
 
-Route::post('/marking-results', [\App\Http\Controllers\Api\MarkingResultController::class, 'receive']);
+Route::post('/marking-results', [MarkingResultController::class, 'receive']);
+
+// Student authentication routes
+Route::post('/students/login', [StudentController::class, 'login']);
+Route::post('/students/register', [StudentController::class, 'register']);
+Route::post('/students/logout', [StudentController::class, 'logout']);
+Route::post('/students/forgot-password', [StudentController::class, 'forgotPassword']);
+Route::post('/students/reset-password', [StudentController::class, 'resetPassword']);

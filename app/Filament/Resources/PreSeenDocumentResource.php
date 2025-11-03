@@ -53,6 +53,11 @@ class PreSeenDocumentResource extends Resource
                 Tables\Columns\TextColumn::make('page_count')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('file_path')
+                    ->numeric()
+                    // storage_path('app/' . $record->file_path)
+                    ->url(fn ($record) => asset('storage/'.$record->file_path))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -67,17 +72,21 @@ class PreSeenDocumentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('upload_to_n8n')
-                    ->label('Upload to N8N')
+                    ->label('Upload to AI')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->action(function (PreSeenDocument $record) {
                         $n8nUrl = config('services.n8n.upload_url');
                         if ($n8nUrl) {
-                            \Illuminate\Support\Facades\Http::post($n8nUrl, [
+                            $filePath = asset('storage/'.$record->file_path);
+                            // if (file_exists($filePath)) {
+                            \Illuminate\Support\Facades\Http::attach(
+                                'file_data', file_get_contents($filePath), basename($record->file_path)
+                            )->post($n8nUrl, [
                                 'type' => 'pre_seen_document',
                                 'id' => $record->id,
                                 'name' => $record->name,
-                                'file_path' => $record->file_path,
                             ]);
+                            // }
                         }
                     })
                     ->requiresConfirmation(),

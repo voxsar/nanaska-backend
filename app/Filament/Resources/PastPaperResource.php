@@ -82,7 +82,7 @@ class PastPaperResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('upload_to_n8n')
-                    ->label('Upload to N8N')
+                    ->label('Upload to AI')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->action(function (PastPaper $record) {
                         $n8nUrl = config('services.n8n.upload_url');

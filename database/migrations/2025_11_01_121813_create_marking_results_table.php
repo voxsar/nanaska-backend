@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('marking_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_answer_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->decimal('marks_obtained', 5, 2);

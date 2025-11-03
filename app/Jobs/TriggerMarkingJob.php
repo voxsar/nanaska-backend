@@ -38,7 +38,7 @@ class TriggerMarkingJob implements ShouldQueue
         $n8nUrl = config('services.n8n.marking_url');
 
         if (! $n8nUrl) {
-            Log::error('N8N Marking URL not configured');
+            Log::error('AI Marking URL not configured');
             $this->studentAnswer->update(['status' => 'submitted']);
 
             return;

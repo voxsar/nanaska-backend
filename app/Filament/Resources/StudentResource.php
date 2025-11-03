@@ -30,17 +30,14 @@ class StudentResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
-                    ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn ($context) => $context === 'create')
                     ->maxLength(255)
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->helperText('⚠️ SECURITY WARNING: Plain text password - stored as entered (per requirements)'),
+                    ->dehydrated(fn ($state) => filled($state)),                    
                 Forms\Components\TextInput::make('student_id')
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255),
