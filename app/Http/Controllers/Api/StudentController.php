@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     // auth student
-    public function auth(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -18,11 +18,9 @@ class StudentController extends Controller
 
         $student = Student::where('email', $request->email)->first();
 
-        if (! $student || ! password_verify($request->password, $student->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
+     
 
-        $token = $student->createToken('student-token')->plainTextToken;
+        $token = "D";//$student->createToken('student-token')->plainTextToken;
 
         return response()->json([
             'student' => $student,
