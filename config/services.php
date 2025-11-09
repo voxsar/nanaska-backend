@@ -40,6 +40,8 @@ return [
 		'question_test_url' => env('N8N_QUESTION_TEST_URL'),
 		'ask_preseen_url' => env('N8N_ASK_PRESEEN_URL'),
 		'ask_preseen_test_url' => env('N8N_ASK_PRESEEN_TEST_URL'),
+		'analysis_model_url' => env('N8N_ANALYSIS_MODEL_URL'),
+		'analysis_test_model_url' => env('N8N_ANALYSIS_TEST_MODEL_URL'),
     ],
 
 ];
