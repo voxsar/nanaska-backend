@@ -21,14 +21,13 @@ class QuestionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('reference_material')
-                    ->maxLength(65535)
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('context')
                     ->required()
                     ->columnSpanFull(),
-				PrettyJsonField::make('question_text')
-					->required()
-					->columnSpanFull(),
+                PrettyJsonField::make('question_text')
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('duration_minutes')
                     ->required()
                     ->numeric()

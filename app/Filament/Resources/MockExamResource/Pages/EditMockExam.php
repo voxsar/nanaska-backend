@@ -21,11 +21,7 @@ class EditMockExam extends EditRecord
 					// upload record to the upload PDF route not redirect
 					$mockExamId = $this->record->id;
 					$response = app('App\Http\Controllers\Api\MockExamController')->sendMockExamRecord($this->record);
-					if ($response->getStatusCode() == 200) {
-						$this->notify('success', 'Mock Exam PDF uploaded successfully.');
-					} else {
-						$this->notify('danger', 'Failed to upload Mock Exam PDF.');
-					}
+					
 				})
 				->color('secondary'),
         ];

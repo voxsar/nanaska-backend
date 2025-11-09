@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mock_exam_questions', function (Blueprint $table) {
+        Schema::create('mock_exam_sub_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mock_exam_id')->constrained()->onDelete('cascade');
-            $table->string('question_number')->nullable();
-            $table->text('context')->nullable();
-            $table->text('reference_material')->nullable();
-            $table->integer('duration_minutes')->default(0);
+            $table->foreignId('mock_exam_question_id')->constrained()->onDelete('cascade');
+            $table->string('sub_question_number')->nullable();
+            $table->text('sub_question_text');
             $table->integer('marks')->default(0);
             $table->integer('order')->default(0);
             $table->timestamps();
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mock_exam_questions');
+        Schema::dropIfExists('mock_exam_sub_questions');
     }
 };

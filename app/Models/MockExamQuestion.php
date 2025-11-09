@@ -12,23 +12,27 @@ class MockExamQuestion extends Model
     protected $fillable = [
         'mock_exam_id',
         'reference_material',
-		"context",
+        'context',
         'question_number',
-        'question_text',
-		'duration_minutes',
+        'duration_minutes',
         'marks',
         'order',
-		'full_json',
     ];
 
-	protected $casts = [
-		'question_text' => 'array',
-		'full_json' => 'array',
-	];
+    protected $casts = [
+        'duration_minutes' => 'integer',
+        'marks' => 'integer',
+        'order' => 'integer',
+    ];
 
     public function mockExam()
     {
         return $this->belongsTo(MockExam::class);
+    }
+
+    public function subQuestions()
+    {
+        return $this->hasMany(MockExamSubQuestion::class, 'mock_exam_question_id');
     }
 
     public function answers()

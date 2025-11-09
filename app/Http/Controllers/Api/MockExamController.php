@@ -16,7 +16,7 @@ class MockExamController extends Controller
     public function sendMockExamRecord(MockExam $mockExam)
     {
         $client = new \GuzzleHttp\Client;
-        $response = $client->post('https://automation.artslabcreatives.com/webhook-test/mock-exams', [
+        $response = $client->post('https://automation.artslabcreatives.com/webhook/mock-exams', [
             'multipart' => [
                 [
                     'name' => 'file',
@@ -38,7 +38,7 @@ class MockExamController extends Controller
      */
     public function index()
     {
-        $mockExams = MockExam::with(['questions', 'preSeenDocument'])
+        $mockExams = MockExam::with(['questions', 'preSeenDocument', 'questions.subQuestions'])
             ->where('is_active', true)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -84,63 +84,65 @@ class MockExamController extends Controller
 
     /**
      * Submit answer to a mock exam question
+     * Supports both creating new answers and updating existing ones
      * Note: CSRF protection is disabled for API routes
      */
     public function submitAnswer(Request $request)
     {
         $validated = $request->validate([
-            'student_email' => 'required|email',
-            'student_password' => 'required',
+            'student_id' => 'required|exists:students,id',
             'mock_exam_id' => 'required|exists:mock_exams,id',
             'mock_exam_question_id' => 'required|exists:mock_exam_questions,id',
+            'mock_exam_sub_question_id' => 'nullable|exists:mock_exam_sub_questions,id',
             'mock_exam_attempt_id' => 'nullable|exists:mock_exam_attempts,id',
+            'answer_id' => 'nullable|exists:mock_exam_answers,id',
             'answer_text' => 'required|string',
         ]);
-
-        // Authenticate student (plain text password as per requirements)
-        $student = Student::where('email', $validated['student_email'])
-            ->where('password', $validated['student_password'])
-            ->first();
-
-        if (! $student) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid credentials',
-            ], 401);
-        }
 
         // Create or get existing attempt
         if (isset($validated['mock_exam_attempt_id'])) {
             $attempt = MockExamAttempt::findOrFail($validated['mock_exam_attempt_id']);
         } else {
             $attempt = MockExamAttempt::create([
-                'student_id' => $student->id,
+                'student_id' => $validated['student_id'],
                 'mock_exam_id' => $validated['mock_exam_id'],
                 'started_at' => now(),
                 'status' => 'in_progress',
             ]);
         }
 
-        // Create answer
-        $answer = MockExamAnswer::create([
-            'mock_exam_attempt_id' => $attempt->id,
-            'mock_exam_question_id' => $validated['mock_exam_question_id'],
-            'student_id' => $student->id,
-            'answer_text' => $validated['answer_text'],
-            'status' => 'submitted',
-            'submitted_at' => now(),
-        ]);
+        // Create or update answer
+        if (isset($validated['answer_id'])) {
+            // Update existing answer
+            $answer = MockExamAnswer::findOrFail($validated['answer_id']);
+            $answer->update([
+                'answer_text' => $validated['answer_text'],
+                'submitted_at' => now(),
+            ]);
+            $message = 'Answer updated successfully';
+        } else {
+            // Create new answer
+            $answer = MockExamAnswer::create([
+                'mock_exam_attempt_id' => $attempt->id,
+                'mock_exam_question_id' => $validated['mock_exam_question_id'],
+                'mock_exam_sub_question_id' => $validated['mock_exam_sub_question_id'] ?? null,
+                'student_id' => $validated['student_id'],
+                'answer_text' => $validated['answer_text'],
+                'status' => 'submitted',
+                'submitted_at' => now(),
+            ]);
+            $message = 'Answer submitted successfully';
+        }
 
-        // Observer will automatically trigger marking job
+        // Observer will automatically trigger marking job on create/update
+
+        // Load relationships for complete answer object
+        $answer->load(['attempt', 'question', 'subQuestion', 'student']);
 
         return response()->json([
             'success' => true,
-            'message' => 'Answer submitted successfully',
-            'data' => [
-                'answer_id' => $answer->id,
-                'attempt_id' => $attempt->id,
-                'status' => $answer->status,
-            ],
+            'message' => $message,
+            'data' => $answer,
         ]);
     }
 

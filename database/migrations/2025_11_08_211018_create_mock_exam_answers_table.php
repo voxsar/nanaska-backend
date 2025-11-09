@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mock_exam_attempt_id')->constrained()->onDelete('cascade');
             $table->foreignId('mock_exam_question_id')->constrained()->onDelete('cascade');
+            $table->foreignId('mock_exam_sub_question_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->text('answer_text');
             $table->string('file_path')->nullable();

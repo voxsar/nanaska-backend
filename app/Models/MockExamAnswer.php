@@ -12,6 +12,7 @@ class MockExamAnswer extends Model
     protected $fillable = [
         'mock_exam_attempt_id',
         'mock_exam_question_id',
+        'mock_exam_sub_question_id',
         'student_id',
         'answer_text',
         'file_path',
@@ -36,6 +37,11 @@ class MockExamAnswer extends Model
     public function question()
     {
         return $this->belongsTo(MockExamQuestion::class, 'mock_exam_question_id');
+    }
+
+    public function subQuestion()
+    {
+        return $this->belongsTo(MockExamSubQuestion::class, 'mock_exam_sub_question_id');
     }
 
     public function student()
