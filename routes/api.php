@@ -34,6 +34,9 @@ Route::get('/past-papers/{id}/questions', [PastPaperController::class, 'question
 Route::post('/students/submit-answer', [StudentAnswerController::class, 'submit']);
 
 Route::post('/marking-results', [MarkingResultController::class, 'receive']);
+Route::get('/marking-results/student/{studentId}', [MarkingResultController::class, 'studentResults']);
+Route::get('/marking-results/answer/{answerId}', [MarkingResultController::class, 'answerResult']);
+Route::get('/marking-results/attempt/{attemptId}', [MarkingResultController::class, 'attemptResults']);
 
 // Student public auth routes
 Route::post('/students/login', [StudentController::class, 'login']);

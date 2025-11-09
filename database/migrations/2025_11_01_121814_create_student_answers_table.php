@@ -22,9 +22,6 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
         });
-        Schema::table('marking_results', function (Blueprint $table) {
-            $table->foreignId('student_answer_id')->constrained()->onDelete('cascade');
-        });
     }
 
     /**

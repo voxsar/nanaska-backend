@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MarkingResultResource\Pages;
-use App\Filament\Resources\MarkingResultResource\RelationManagers;
 use App\Models\MarkingResult;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MarkingResultResource extends Resource
 {
@@ -128,19 +125,22 @@ class MarkingResultResource extends Resource
                     ->schema([
                         Forms\Components\Repeater::make('points_summary')
                             ->schema([
-                                Forms\Components\TextInput::make('point')
-                                    ->disabled()
-                                    ->columnSpan(2),
-                                Forms\Components\TextInput::make('justified_with')
-                                    ->disabled()
-                                    ->columnSpan(2),
-                                Forms\Components\Select::make('practicality')
-                                    ->options([
-                                        'low' => 'Low',
-                                        'medium' => 'Medium',
-                                        'high' => 'High',
+                                Forms\Components\Fieldset::make('Point Row')
+                                    ->schema([
+                                        Forms\Components\TextArea::make('point')
+                                            ->disabled(),
+                                        Forms\Components\TextInput::make('justified_with')
+                                            ->disabled(),
+                                        Forms\Components\Select::make('practicality')
+                                            ->options([
+                                                'low' => 'Low',
+                                                'medium' => 'Medium',
+                                                'high' => 'High',
+                                            ])
+                                            ->disabled(),
                                     ])
-                                    ->disabled(),
+                                    ->columns(1)
+                                    ->columnSpanFull(),
                             ])
                             ->disabled()
                             ->columns(5)
@@ -166,10 +166,17 @@ class MarkingResultResource extends Resource
                     ->formatStateUsing(fn ($record) => "{$record->marks_obtained}/{$record->total_marks}")
                     ->badge()
                     ->color(function ($record) {
-                        if (!$record->total_marks) return 'gray';
-                        $percentage = ($record->marks_obtained / $record->total_marks) * 100;
-                        if ($percentage >= 70) return 'success';
-                        if ($percentage >= 50) return 'warning';
+                        if (! $record->total_marks) {
+                            return 'gray';
+                        }
+                        $percentage = 0; // ($record->marks_obtained / $record->total_marks) * 100;
+                        if ($percentage >= 70) {
+                            return 'success';
+                        }
+                        if ($percentage >= 50) {
+                            return 'warning';
+                        }
+
                         return 'danger';
                     })
                     ->sortable(),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessMarkingResultJob;
+use App\Models\MarkingResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,6 +45,76 @@ class MarkingResultController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Marking result received and will be processed',
+        ]);
+    }
+
+    /**
+     * Get marking results for a specific student
+     */
+    public function studentResults($studentId)
+    {
+        $results = MarkingResult::with([
+            'studentAnswer.question',
+            'studentAnswer.subQuestion',
+            'studentAnswer.attempt.mockExam',
+            'question',
+        ])
+            ->where('student_id', $studentId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
+        ]);
+    }
+
+    /**
+     * Get marking result for a specific answer
+     */
+    public function answerResult($answerId)
+    {
+        $result = MarkingResult::with([
+            'studentAnswer.question',
+            'studentAnswer.subQuestion',
+            'studentAnswer.attempt.mockExam',
+            'question',
+        ])
+            ->where('student_answer_id', $answerId)
+            ->first();
+
+        if (!$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Marking result not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result,
+        ]);
+    }
+
+    /**
+     * Get marking results for a specific mock exam attempt
+     */
+    public function attemptResults($attemptId)
+    {
+        $results = MarkingResult::with([
+            'studentAnswer.question',
+            'studentAnswer.subQuestion',
+            'question',
+        ])
+            ->whereHas('studentAnswer', function ($query) use ($attemptId) {
+                $query->where('mock_exam_attempt_id', $attemptId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
         ]);
     }
 }

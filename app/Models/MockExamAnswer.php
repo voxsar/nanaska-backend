@@ -51,6 +51,6 @@ class MockExamAnswer extends Model
 
     public function markingResult()
     {
-        return $this->hasOne(MarkingResult::class, 'mock_exam_answer_id');
+        return $this->hasOne(MarkingResult::class, 'student_answer_id');
     }
 }

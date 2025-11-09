@@ -49,7 +49,7 @@ class MarkingResult extends Model
 
     public function studentAnswer()
     {
-        return $this->belongsTo(StudentAnswer::class);
+        return $this->belongsTo(MockExamAnswer::class, 'student_answer_id');
     }
 
     public function student()
@@ -59,6 +59,6 @@ class MarkingResult extends Model
 
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(MockExamQuestion::class, 'question_id');
     }
 }

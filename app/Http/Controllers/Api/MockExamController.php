@@ -185,23 +185,8 @@ class MockExamController extends Controller
             'mockExam',
             'answers.question',
             'answers.subQuestion',
-            'answers.markingResult', // Add marking result relationship
+            'answers.markingResult',
         ])
-        ->with(['answers' => function($query) {
-            $query->select([
-                'id',
-                'mock_exam_attempt_id',
-                'mock_exam_question_id',
-                'mock_exam_sub_question_id',
-                'student_id',
-                'answer_text',
-                'marks_obtained',
-                'feedback',
-                'ai_response',
-                'status',
-                'submitted_at',
-            ]);
-        }])
             ->where('student_id', $studentId)
             ->orderBy('created_at', 'desc')
             ->get();
