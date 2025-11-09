@@ -39,8 +39,8 @@ class MockExamSubQuestionResource extends Resource
                     ->label('Sub-Question Text'),
                 Forms\Components\TextInput::make('marks')
                     ->required()
-                    ->numeric()
-                    ->default(0)
+                    ->maxLength(50)
+                    ->default('0')
                     ->label('Marks'),
                 Forms\Components\TextInput::make('order')
                     ->required()

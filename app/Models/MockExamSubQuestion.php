@@ -18,7 +18,7 @@ class MockExamSubQuestion extends Model
     ];
 
     protected $casts = [
-        'marks' => 'integer',
+        'marks' => 'string',
         'order' => 'integer',
     ];
 
