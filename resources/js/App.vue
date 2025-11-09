@@ -1,0 +1,19 @@
+<template>
+  <div id="app" :class="{ 'dark': isDark }">
+    <router-view />
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useThemeStore } from '@/stores/theme';
+
+const themeStore = useThemeStore();
+const isDark = computed(() => themeStore.isDark);
+</script>
+
+<style scoped>
+#app {
+  min-height: 100vh;
+}
+</style>
