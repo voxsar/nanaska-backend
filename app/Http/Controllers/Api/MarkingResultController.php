@@ -11,20 +11,35 @@ class MarkingResultController extends Controller
 {
     public function receive(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'student_answer_id' => 'required|exists:student_answers,id',
-            'marks_obtained' => 'required|numeric',
-            'total_marks' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
+        // Handle array format where data comes wrapped in an array
+        $data = $request->all();
+        
+        // If data is an array with output and body, extract them
+        if (is_array($data) && isset($data[0])) {
+            $data = $data[0];
+        }
+        
+        // Extract the body (contains IDs) and output (contains grading)
+        $body = $data['body'] ?? [];
+        $output = $data['output'] ?? [];
+        
+        // Determine which ID field is present
+        $answerIdField = $body['mock_exam_answer_id'] ?? $body['student_answer_id'] ?? null;
+        
+        if (!$answerIdField) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors(),
+                'errors' => ['answer_id' => ['No valid answer ID provided']],
             ], 422);
         }
-
-        ProcessMarkingResultJob::dispatch($request->all());
+        
+        // Merge body and output for processing
+        $processData = array_merge($body, [
+            'student_answer_id' => $answerIdField,
+            'output' => $output,
+        ]);
+        
+        ProcessMarkingResultJob::dispatch($processData);
 
         return response()->json([
             'success' => true,

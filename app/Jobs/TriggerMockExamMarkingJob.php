@@ -5,27 +5,27 @@ namespace App\Jobs;
 use App\Models\MockExamAnswer;
 use App\Models\MockExamMarkingPrompt;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-//unique
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+// unique
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class TriggerMockExamMarkingJob implements ShouldQueue, ShouldBeUnique
+class TriggerMockExamMarkingJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-	/**
+    /**
      * The number of seconds after which the job's unique lock will be released.
      *
      * @var int
      */
     public $uniqueFor = 3600;
 
-	/**
+    /**
      * Get the unique ID for the job.
      */
     public function uniqueId(): string
@@ -35,10 +35,8 @@ class TriggerMockExamMarkingJob implements ShouldQueue, ShouldBeUnique
 
     public $mockExamAnswer;
 
-	//max attempts
-	public $tries = 3;
-
-	
+    // max attempts
+    public $tries = 3;
 
     /**
      * Create a new job instance.
@@ -61,25 +59,34 @@ class TriggerMockExamMarkingJob implements ShouldQueue, ShouldBeUnique
             ->first();
 
         // Fallback to any active marking prompt for mock exams
-        if (!$markingPrompt) {
+        if (! $markingPrompt) {
             $markingPrompt = MockExamMarkingPrompt::where('is_active', true)->first();
         }
 
-        $n8nUrl = config('services.n8n.marking_url');
+        $n8nMarkingUrl = config('services.n8n.marking_url');
+		$n8nMarkingTestUrl = config('services.n8n.marking_test_url');
 
-        if (!$n8nUrl) {
+        Log::info([
+            'Using N8N Marking URL' => $n8nMarkingUrl,
+            'Mock Exam Answer ID' => $this->mockExamAnswer->id,
+        ]);
+
+        if (! $n8nMarkingUrl) {
             Log::error('Mock Exam Marking URL not configured');
             $this->mockExamAnswer->update(['status' => 'submitted']);
+
             return;
         }
 
         try {
-            $response = Http::post($n8nUrl, [
+            $response = Http::post($n8nMarkingTestUrl, [
                 'mock_exam_answer_id' => $this->mockExamAnswer->id,
+                'preseen_document_id' => $this->mockExamAnswer->question->mockExam->pre_seen_document_id,
                 'student_id' => $this->mockExamAnswer->student_id,
                 'question_id' => $this->mockExamAnswer->mock_exam_question_id,
                 'answer_text' => $this->mockExamAnswer->answer_text,
                 'question' => $this->mockExamAnswer->question->question_text ?? null,
+                'subQuestion' => $this->mockExamAnswer->subQuestion->sub_question_text ?? null,
                 'marks' => $this->mockExamAnswer->question->marks ?? 0,
                 'marking_prompt' => $markingPrompt->prompt_text ?? null,
                 'type' => 'mock_exam',
@@ -92,7 +99,25 @@ class TriggerMockExamMarkingJob implements ShouldQueue, ShouldBeUnique
                 $this->mockExamAnswer->update(['status' => 'submitted']);
             }
         } catch (\Exception $e) {
-            Log::error('Error triggering mock exam marking: '.$e->getMessage());
+            $response = Http::post($n8nMarkingUrl, [
+                'mock_exam_answer_id' => $this->mockExamAnswer->id,
+                'preseen_document_id' => $this->mockExamAnswer->question->mockExam->pre_seen_document_id,
+                'student_id' => $this->mockExamAnswer->student_id,
+                'question_id' => $this->mockExamAnswer->mock_exam_question_id,
+                'answer_text' => $this->mockExamAnswer->answer_text,
+                'question' => $this->mockExamAnswer->question->question_text ?? null,
+                'subQuestion' => $this->mockExamAnswer->subQuestion->sub_question_text ?? null,
+                'marks' => $this->mockExamAnswer->question->marks ?? 0,
+                'marking_prompt' => $markingPrompt->prompt_text ?? null,
+                'type' => 'mock_exam',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Mock exam marking triggered successfully for answer: '.$this->mockExamAnswer->id);
+            } else {
+                Log::error('Failed to trigger mock exam marking for answer: '.$this->mockExamAnswer->id);
+                $this->mockExamAnswer->update(['status' => 'submitted']);
+            }
             $this->mockExamAnswer->update(['status' => 'submitted']);
         }
     }

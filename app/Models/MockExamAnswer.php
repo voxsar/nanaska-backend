@@ -48,4 +48,9 @@ class MockExamAnswer extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function markingResult()
+    {
+        return $this->hasOne(MarkingResult::class, 'mock_exam_answer_id');
+    }
 }

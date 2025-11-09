@@ -65,6 +65,7 @@ Route::get('/practice-exams', [PracticeExamController::class, 'index']);
 Route::get('/practice-exams/{id}/questions', [PracticeExamController::class, 'questions']);
 
 // Student Questions (Ask AI) Routes
+Route::get('/student-questions', [StudentQuestionController::class, 'index']);
 Route::post('/student-questions', [StudentQuestionController::class, 'store']);
 Route::get('/student-questions/{id}', [StudentQuestionController::class, 'show']);
 Route::post('/student-questions/{id}/response', [StudentQuestionController::class, 'response']);

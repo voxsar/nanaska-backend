@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Log;
 use App\Http\Controllers\Controller;
 use App\Models\MockExam;
 use App\Models\MockExamAnswer;
@@ -15,20 +16,46 @@ class MockExamController extends Controller
     // send mock exam record including pdf to https://automation.artslabcreatives.com/webhook-test/mock-exams
     public function sendMockExamRecord(MockExam $mockExam)
     {
+        Log::info('Sending mock exam record', ['mockExamId' => $mockExam->id]);
         $client = new \GuzzleHttp\Client;
-        $response = $client->post('https://automation.artslabcreatives.com/webhook/mock-exams', [
-            'multipart' => [
-                [
-                    'name' => 'file',
-                    'contents' => fopen(storage_path('app/public/'.$mockExam->file_path), 'r'),
-                    'filename' => Str::snake($mockExam->name),
-                ],
-                [
-                    'name' => 'mockExamData',
-                    'contents' => json_encode($mockExam),
-                ],
-            ],
-        ]);
+		
+        $questionUrl = config('services.n8n.question_url');
+		$questionTestUrl = config('services.n8n.question_test_url');
+
+		try{
+			Log::info('Sending to test URL', ['testUrl' => $questionTestUrl, 'mockExamId' => $mockExam->id]);
+			$response = $client->post($questionTestUrl, [
+				'multipart' => [
+					[
+						'name' => 'file',
+						'contents' => fopen(storage_path('app/public/'.$mockExam->file_path), 'r'),
+						'filename' => Str::snake($mockExam->name),
+					],
+					[
+						'name' => 'mockExamData',
+						'contents' => json_encode($mockExam),
+					],
+				],
+			]);
+		}catch(\Exception $e){
+			Log::error('Error sending mock exam to test URL', [
+				'error' => $e->getMessage(),
+				'mockExamId' => $mockExam->id,
+			]);
+			$response = $client->post($questionUrl, [
+				'multipart' => [
+					[
+						'name' => 'file',
+						'contents' => fopen(storage_path('app/public/'.$mockExam->file_path), 'r'),
+						'filename' => Str::snake($mockExam->name),
+					],
+					[
+						'name' => 'mockExamData',
+						'contents' => json_encode($mockExam),
+					],
+				],
+			]);
+		}
 
         return $response;
     }
@@ -158,22 +185,23 @@ class MockExamController extends Controller
             'mockExam',
             'answers.question',
             'answers.subQuestion',
+            'answers.markingResult', // Add marking result relationship
         ])
-            ->with(['answers' => function ($query) {
-                $query->select([
-                    'id',
-                    'mock_exam_attempt_id',
-                    'mock_exam_question_id',
-                    'mock_exam_sub_question_id',
-                    'student_id',
-                    'answer_text',
-                    'marks_obtained',
-                    'feedback',
-                    'ai_response',
-                    'status',
-                    'submitted_at',
-                ]);
-            }])
+        ->with(['answers' => function($query) {
+            $query->select([
+                'id',
+                'mock_exam_attempt_id',
+                'mock_exam_question_id',
+                'mock_exam_sub_question_id',
+                'student_id',
+                'answer_text',
+                'marks_obtained',
+                'feedback',
+                'ai_response',
+                'status',
+                'submitted_at',
+            ]);
+        }])
             ->where('student_id', $studentId)
             ->orderBy('created_at', 'desc')
             ->get();

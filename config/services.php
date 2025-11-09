@@ -33,7 +33,13 @@ return [
 
     'n8n' => [
         'upload_url' => env('N8N_UPLOAD_URL'),
+		'upload_test_url' => env('N8N_UPLOAD_TEST_URL'),
         'marking_url' => env('N8N_MARKING_URL'),
+		'marking_test_url' => env('N8N_MARKING_TEST_URL'),
+        'question_url' => env('N8N_QUESTION_URL'),
+		'question_test_url' => env('N8N_QUESTION_TEST_URL'),
+		'ask_preseen_url' => env('N8N_ASK_PRESEEN_URL'),
+		'ask_preseen_test_url' => env('N8N_ASK_PRESEEN_TEST_URL'),
     ],
 
 ];

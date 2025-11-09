@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-    MockExamAnswer::observe(MockExamAnswerObserver::class);
-    PreSeenDocument::observe(PreSeenDocumentObserver::class);
+        MockExamAnswer::observe(MockExamAnswerObserver::class);
+        PreSeenDocument::observe(PreSeenDocumentObserver::class);
     }
 }

@@ -11,12 +11,25 @@
           <router-link to="/mock-exams" class="text-primary-600 dark:text-primary-400 hover:underline mb-2 inline-block">
             ← Back to Mock Exams
           </router-link>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {{ attempt.mock_exam?.name || 'Mock Exam Attempt' }}
-          </h1>
-          <p class="text-gray-600 dark:text-gray-400">
-            Attempt from {{ formatDate(attempt.started_at) }}
-          </p>
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                {{ attempt.mock_exam?.name || 'Mock Exam Attempt' }}
+              </h1>
+              <p class="text-gray-600 dark:text-gray-400">
+                Attempt from {{ formatDate(attempt.started_at) }}
+              </p>
+            </div>
+            <router-link 
+              :to="'/mock-exams/attempts/' + attempt.id + '/summary'" 
+              class="btn btn-primary flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              View Results Summary
+            </router-link>
+          </div>
         </div>
 
         <!-- Overall Results Card -->
@@ -87,34 +100,23 @@
             </div>
 
             <!-- Marking Results -->
-            <div v-if="answer.marks_obtained !== null || answer.feedback" class="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div v-if="answer.marks_obtained !== null">
-                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Marks Obtained:</h4>
-                  <p class="text-xl font-bold text-primary-600 dark:text-primary-400">
-                    {{ answer.marks_obtained }}
-                  </p>
-                </div>
-                <div>
-                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Status:</h4>
-                  <span class="inline-block px-2 py-1 rounded text-xs font-semibold" :class="getAnswerStatusBadge(answer.status)">
-                    {{ answer.status }}
-                  </span>
+                        <!-- Marking Results -->
+            <div v-if="answer.status === 'marked'" class="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <!-- Detailed Marking Result Component -->
+              <MarkingResultDisplay v-if="answer.marking_result" :result="answer.marking_result" />
+              
+              <!-- Fallback for basic feedback if detailed results not available -->
+              <div v-else-if="answer.feedback" class="space-y-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                  <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Feedback:</h4>
+                  <p class="text-blue-800 dark:text-blue-200 whitespace-pre-wrap">{{ answer.feedback }}</p>
                 </div>
               </div>
 
-              <!-- Feedback -->
-              <div v-if="answer.feedback" class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Feedback:</h4>
-                <p class="text-blue-800 dark:text-blue-200 whitespace-pre-wrap">{{ answer.feedback }}</p>
-              </div>
-
-              <!-- AI Response -->
+              <!-- AI Response (if available) -->
               <div v-if="answer.ai_response" class="mt-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
                 <h4 class="text-sm font-semibold text-purple-900 dark:text-purple-300 mb-2">AI Analysis:</h4>
-                <div class="text-purple-800 dark:text-purple-200">
-                  <pre class="whitespace-pre-wrap text-sm">{{ formatAiResponse(answer.ai_response) }}</pre>
-                </div>
+                <pre class="text-purple-800 dark:text-purple-200 whitespace-pre-wrap text-sm">{{ formatAiResponse(answer.ai_response) }}</pre>
               </div>
             </div>
 
@@ -153,6 +155,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from '@/components/Layout.vue';
+import MarkingResultDisplay from '@/components/MarkingResultDisplay.vue';
 import api from '@/api/client';
 
 const route = useRoute();

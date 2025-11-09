@@ -93,6 +93,13 @@ const router = createRouter({
 			meta: { requiresAuth: true },
 		},
 		{
+			path: '/mock-exams/attempts/:id/summary',
+			name: 'MockExamAttemptSummary',
+			component: () => import('@/views/MockExamAttemptSummary.vue'),
+			beforeEnter: requireAuth,
+			meta: { requiresAuth: true },
+		},
+		{
 			path: '/exam/:type/:id',
 			name: 'QuestionInterface',
 			component: () => import('@/views/QuestionInterface.vue'),

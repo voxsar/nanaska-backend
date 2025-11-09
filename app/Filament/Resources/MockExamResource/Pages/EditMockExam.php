@@ -16,14 +16,15 @@ class EditMockExam extends EditRecord
         return [
             Actions\DeleteAction::make(),
 			Action::make('uploadPdf')
-				->label('Upload PDF')
+				->label('Extract Questions from PDF')
+				//color
+				->color('primary')
 				->action(function () {
 					// upload record to the upload PDF route not redirect
 					$mockExamId = $this->record->id;
 					$response = app('App\Http\Controllers\Api\MockExamController')->sendMockExamRecord($this->record);
 					
-				})
-				->color('secondary'),
+				}),
         ];
     }
 }

@@ -35,9 +35,16 @@ class TriggerMarkingJob implements ShouldQueue
 
         $markingPrompt = MarkingPrompt::where('is_active', true)->first();
 
-        $n8nUrl = config('services.n8n.marking_url');
+        $n8nMarkingUrl = config('services.n8n.marking_url');
+		$n8nMarkingTestUrl = config('services.n8n.marking_test_url');
 
-        if (! $n8nUrl) {
+        if (! $n8nMarkingTestUrl) {
+            Log::error('AI Marking Test URL not configured');
+            $this->studentAnswer->update(['status' => 'submitted']);
+
+            return;
+        }
+        if (! $n8nMarkingUrl) {
             Log::error('AI Marking URL not configured');
             $this->studentAnswer->update(['status' => 'submitted']);
 
@@ -45,7 +52,7 @@ class TriggerMarkingJob implements ShouldQueue
         }
 
         try {
-            $response = Http::post($n8nUrl, [
+            $response = Http::post($n8nMarkingTestUrl, [
                 'student_answer_id' => $this->studentAnswer->id,
                 'student_id' => $this->studentAnswer->student_id,
                 'question_id' => $this->studentAnswer->question_id,
@@ -63,7 +70,23 @@ class TriggerMarkingJob implements ShouldQueue
             }
         } catch (\Exception $e) {
             Log::error('Error triggering marking: '.$e->getMessage());
-            $this->studentAnswer->update(['status' => 'submitted']);
+			
+            $response = Http::post($n8nMarkingUrl, [
+                'student_answer_id' => $this->studentAnswer->id,
+                'student_id' => $this->studentAnswer->student_id,
+                'question_id' => $this->studentAnswer->question_id,
+                'answer_text' => $this->studentAnswer->answer_text,
+                'question' => $this->studentAnswer->question->question_text ?? null,
+                'marks' => $this->studentAnswer->question->marks ?? 0,
+                'marking_prompt' => $markingPrompt->prompt_text ?? null,
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Marking triggered successfully for answer: '.$this->studentAnswer->id);
+            } else {
+                Log::error('Failed to trigger marking for answer: '.$this->studentAnswer->id);
+                $this->studentAnswer->update(['status' => 'submitted']);
+            }
         }
     }
 }

@@ -12,6 +12,27 @@ use Illuminate\Support\Facades\Log;
 class StudentQuestionController extends Controller
 {
     /**
+     * List all questions (optionally filter by student_id).
+     */
+    public function index(Request $request)
+    {
+        $query = StudentQuestion::with('preSeenDocument')
+            ->orderBy('created_at', 'desc');
+
+        // Filter by student if provided
+        if ($request->has('student_id')) {
+            $query->where('student_id', $request->student_id);
+        }
+
+        $questions = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $questions,
+        ]);
+    }
+
+    /**
      * Ask a question - creates record and dispatches to external webhooks.
      */
     public function store(Request $request)
@@ -38,9 +59,10 @@ class StudentQuestionController extends Controller
         ];
 
         $client = new Client(['timeout' => 30, 'http_errors' => false]);
+		
         $endpoints = [
-            'https://automation.artslabcreatives.com/webhook-test/27ece82e-3a98-4811-b307-f2692ea1df69',
-            'https://automation.artslabcreatives.com/webhook/27ece82e-3a98-4811-b307-f2692ea1df69',
+            config('services.n8n.ask_preseen_test_url'),
+            config('services.n8n.ask_preseen_url'),
         ];
 
         foreach ($endpoints as $url) {
