@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\MarkingResultController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\MockExamController;
 use App\Http\Controllers\Api\MockExamQuestionController;
+use App\Http\Controllers\Api\PreSeenDocumentController;
+use App\Http\Controllers\Api\PracticeExamController;
+use App\Http\Controllers\Api\StudentQuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,3 +55,16 @@ Route::get('/mock-exams/{id}', [MockExamController::class, 'show']);
 Route::get('/mock-exams/{id}/questions', [MockExamController::class, 'questions']);
 Route::post('/mock-exams/submit-answer', [MockExamController::class, 'submitAnswer']);
 Route::get('/mock-exams/attempts/{studentId}', [MockExamController::class, 'studentAttempts']);
+
+// Pre-Seen Documents API Routes
+Route::get('/pre-seen-documents', [PreSeenDocumentController::class, 'index']);
+Route::get('/pre-seen-documents/{id}', [PreSeenDocumentController::class, 'show']);
+
+// Practice Exams API Routes
+Route::get('/practice-exams', [PracticeExamController::class, 'index']);
+Route::get('/practice-exams/{id}/questions', [PracticeExamController::class, 'questions']);
+
+// Student Questions (Ask AI) Routes
+Route::post('/student-questions', [StudentQuestionController::class, 'store']);
+Route::get('/student-questions/{id}', [StudentQuestionController::class, 'show']);
+Route::post('/student-questions/{id}/response', [StudentQuestionController::class, 'response']);

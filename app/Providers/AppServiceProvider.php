@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\MockExamAnswer;
+use App\Models\PreSeenDocument;
 use App\Observers\MockExamAnswerObserver;
+use App\Observers\PreSeenDocumentObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        MockExamAnswer::observe(MockExamAnswerObserver::class);
+    MockExamAnswer::observe(MockExamAnswerObserver::class);
+    PreSeenDocument::observe(PreSeenDocumentObserver::class);
     }
 }

@@ -13,6 +13,17 @@
             <form @submit.prevent="submitQuestion" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Select Pre-seen Document
+                </label>
+                <select v-model="selectedPreSeenId" class="input-field">
+                  <option value="" disabled>Select a document…</option>
+                  <option v-for="doc in preSeenDocuments" :key="doc.id" :value="doc.id">
+                    {{ doc.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Your Question
                 </label>
                 <textarea
@@ -26,7 +37,7 @@
 
               <button
                 type="submit"
-                :disabled="loading"
+                :disabled="loading || !selectedPreSeenId"
                 class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span v-if="!loading">Get AI Answer</span>
@@ -35,11 +46,34 @@
             </form>
           </div>
 
-          <!-- Answer Section -->
-          <div v-if="answer" class="card">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI Response</h2>
-            <div class="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 rounded-lg p-4 border border-primary-200 dark:border-gray-700">
-              <p class="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{{ answer }}</p>
+          <!-- Pending State -->
+          <div v-if="pending" class="card">
+            <div class="flex items-center space-x-3">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+              <p class="text-gray-700 dark:text-gray-300">Waiting for AI response…</p>
+            </div>
+          </div>
+
+          <!-- AI Answer (Two rows: Answers then Sources) -->
+          <div v-if="aiAnswer" class="space-y-6">
+            <div class="card">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI Answer</h2>
+              <ul class="list-disc pl-6 space-y-2 text-gray-800 dark:text-gray-200">
+                <li v-for="(bp, i) in aiAnswer.bullet_point_answers" :key="i">{{ bp }}</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Sources</h2>
+              <div class="space-y-3">
+                <blockquote
+                  class="border-l-4 border-primary-400 pl-4 text-gray-700 dark:text-gray-300"
+                  v-for="(qs, i) in aiAnswer.quoted_snippets"
+                  :key="i"
+                >
+                  “{{ qs }}”
+                </blockquote>
+              </div>
             </div>
           </div>
         </div>
@@ -69,18 +103,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Layout from '@/components/Layout.vue';
+import api from '@/api/client';
 
 const question = ref('');
-const answer = ref('');
 const loading = ref(false);
 const recentQuestions = ref([]);
+const preSeenDocuments = ref([]);
+const selectedPreSeenId = ref('');
+const pending = ref(false);
+const aiAnswer = ref(null);
+let pollTimer = null;
+
+onMounted(async () => {
+  await loadPreSeenDocuments();
+});
+
+const loadPreSeenDocuments = async () => {
+  try {
+    const res = await api.get('/pre-seen-documents');
+    if (res.data.success) preSeenDocuments.value = res.data.data;
+  } catch (e) {
+    console.error('Failed to load pre-seen documents', e);
+  }
+};
 
 const submitQuestion = async () => {
   if (!question.value.trim()) return;
+  if (!selectedPreSeenId.value) return;
 
   loading.value = true;
+  pending.value = false;
+  aiAnswer.value = null;
   
   // Add to recent questions
   if (!recentQuestions.value.includes(question.value)) {
@@ -90,15 +145,50 @@ const submitQuestion = async () => {
     }
   }
 
-  // TODO: Implement actual API call
-  setTimeout(() => {
-    answer.value = `Thank you for your question: "${question.value}"\n\nThis is a placeholder response. The actual AI-powered answer will analyze your pre-seen documents and provide contextual, detailed answers based on:\n\n1. The content of your case study materials\n2. Relevant business theory and frameworks\n3. Real-world industry applications\n4. CIMA examination requirements\n\nThe system can also help you:\n- Connect case study scenarios to real-world examples\n- Understand complex business concepts\n- Apply theoretical models to practical situations\n- Prepare comprehensive answers for your examination`;
+  try {
+    const res = await api.post('/student-questions', {
+      question_text: question.value,
+      pre_seen_document_id: selectedPreSeenId.value,
+      // TODO: include real student_id from auth store
+    });
+    if (res.data.success) {
+      const id = res.data.data.id;
+      pending.value = true;
+      startPolling(id);
+    }
+  } catch (e) {
+    console.error('Failed to submit question', e);
+    alert('Failed to submit question.');
+  } finally {
     loading.value = false;
-  }, 2000);
+  }
 };
 
 const loadQuestion = (q) => {
   question.value = q;
-  answer.value = '';
+  aiAnswer.value = null;
+  pending.value = false;
+};
+
+const startPolling = (id) => {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await api.get(`/student-questions/${id}`);
+      if (res.data.success) {
+        const data = res.data.data;
+        if (data.status === 'answered') {
+          aiAnswer.value = {
+            bullet_point_answers: data.bullet_point_answers || [],
+            quoted_snippets: data.quoted_snippets || [],
+          };
+          pending.value = false;
+          clearInterval(pollTimer);
+        }
+      }
+    } catch (e) {
+      console.error('Polling failed', e);
+    }
+  }, 2000);
 };
 </script>

@@ -30,7 +30,7 @@
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div v-for="doc in documents" :key="doc.id" class="card-glow cursor-pointer hover:scale-105 transition-transform duration-200">
+        <div v-for="doc in documents" :key="doc.id" class="card-glow hover:scale-105 transition-transform duration-200">
           <div class="flex items-start space-x-4">
             <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,6 +42,9 @@
               <p v-if="doc.company_name" class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ doc.company_name }}</p>
               <p v-if="doc.description" class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ doc.description }}</p>
               <p v-if="doc.page_count" class="text-xs text-gray-500 dark:text-gray-500">{{ doc.page_count }} pages</p>
+              <div v-if="doc.file_path" class="mt-3">
+                <a :href="`/storage/${doc.file_path}`" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline text-sm">View Document</a>
+              </div>
             </div>
           </div>
         </div>
@@ -59,8 +62,20 @@ const documents = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
-  // TODO: Create an API endpoint for pre-seen documents
-  // For now, just show empty state
-  loading.value = false;
+  await loadPreSeenDocuments();
 });
+
+const loadPreSeenDocuments = async () => {
+  loading.value = true;
+  try {
+    const response = await api.get('/pre-seen-documents');
+    if (response.data.success) {
+      documents.value = response.data.data;
+    }
+  } catch (error) {
+    console.error('Failed to load pre-seen documents:', error);
+  } finally {
+    loading.value = false;
+  }
+};
 </script>

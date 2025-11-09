@@ -7,16 +7,38 @@ use App\Models\MockExamMarkingPrompt;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+//unique
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class TriggerMockExamMarkingJob implements ShouldQueue
+class TriggerMockExamMarkingJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+	/**
+     * The number of seconds after which the job's unique lock will be released.
+     *
+     * @var int
+     */
+    public $uniqueFor = 3600;
+
+	/**
+     * Get the unique ID for the job.
+     */
+    public function uniqueId(): string
+    {
+        return $this->mockExamAnswer->id;
+    }
+
     public $mockExamAnswer;
+
+	//max attempts
+	public $tries = 3;
+
+	
 
     /**
      * Create a new job instance.

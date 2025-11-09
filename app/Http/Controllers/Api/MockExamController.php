@@ -154,7 +154,26 @@ class MockExamController extends Controller
      */
     public function studentAttempts($studentId)
     {
-        $attempts = MockExamAttempt::with(['mockExam', 'answers.question'])
+        $attempts = MockExamAttempt::with([
+            'mockExam',
+            'answers.question',
+            'answers.subQuestion',
+        ])
+            ->with(['answers' => function ($query) {
+                $query->select([
+                    'id',
+                    'mock_exam_attempt_id',
+                    'mock_exam_question_id',
+                    'mock_exam_sub_question_id',
+                    'student_id',
+                    'answer_text',
+                    'marks_obtained',
+                    'feedback',
+                    'ai_response',
+                    'status',
+                    'submitted_at',
+                ]);
+            }])
             ->where('student_id', $studentId)
             ->orderBy('created_at', 'desc')
             ->get();

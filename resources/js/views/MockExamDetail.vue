@@ -33,57 +33,31 @@
               </p>
             </div>
           </div>
+
+          <!-- Pre-seen Document Info -->
+          <div v-if="mockExam.pre_seen_document" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Pre-Seen Document</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ mockExam.pre_seen_document.name }}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Start Exam Button -->
-        <div v-if="!examStarted" class="card text-center py-8">
+        <div class="card text-center py-8">
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ready to Begin?</h2>
           <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Once you start the exam, the timer will begin. Make sure you have enough time to complete it.
+            Once you start the exam, you'll see each question with its context, references, and sub-questions. 
+            Make sure you have enough time to complete it.
           </p>
           <button @click="startExam" class="btn-primary">
             Start Mock Exam
           </button>
-        </div>
-
-        <!-- Exam Questions -->
-        <div v-else class="space-y-6">
-          <div
-            v-for="(question, index) in mockExam.questions"
-            :key="question.id"
-            class="card"
-          >
-            <div class="flex items-start space-x-4">
-              <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span class="text-white font-bold">{{ question.question_number }}</span>
-              </div>
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Question {{ question.question_number }}
-                </h3>
-                <p class="text-gray-700 dark:text-gray-300 mb-4 whitespace-pre-wrap">{{ question.question_text }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Marks: {{ question.marks }}</p>
-                
-                <textarea
-                  v-model="answers[question.id]"
-                  rows="6"
-                  class="input-field"
-                  placeholder="Type your answer here..."
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <button
-              @click="submitExam"
-              :disabled="submitting"
-              class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span v-if="!submitting">Submit Exam</span>
-              <span v-else>Submitting...</span>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -105,9 +79,6 @@ const router = useRouter();
 
 const mockExam = ref(null);
 const loading = ref(true);
-const examStarted = ref(false);
-const answers = ref({});
-const submitting = ref(false);
 
 onMounted(async () => {
   await loadMockExam();
@@ -128,18 +99,7 @@ const loadMockExam = async () => {
 };
 
 const startExam = () => {
-  examStarted.value = true;
-  // TODO: Start timer
-};
-
-const submitExam = async () => {
-  submitting.value = true;
-  
-  // TODO: Submit answers to API
-  setTimeout(() => {
-    submitting.value = false;
-    alert('Exam submitted successfully! You will receive your results shortly.');
-    router.push('/mock-exams');
-  }, 2000);
+  // Navigate to unified question interface
+  router.push(`/exam/mock/${route.params.id}`);
 };
 </script>

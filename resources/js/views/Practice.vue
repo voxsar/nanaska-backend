@@ -7,12 +7,12 @@
       
       <div class="card mb-6">
         <p class="text-gray-600 dark:text-gray-400 mb-4">
-          Answer 50 practice questions and receive instant AI-powered marking with detailed feedback. Track your progress and improve your exam preparation.
+          Answer practice questions and receive instant AI-powered marking with detailed feedback. Track your progress and improve your exam preparation.
         </p>
         <div class="flex items-center justify-between">
           <div>
             <span class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ answeredCount }}</span>
-            <span class="text-gray-600 dark:text-gray-400"> / 50 Questions Completed</span>
+            <span class="text-gray-600 dark:text-gray-400"> / {{ practiceExams.length }} Practice Sets Completed</span>
           </div>
           <div class="text-right">
             <span class="text-2xl font-bold text-secondary-600 dark:text-secondary-400">{{ averageScore }}%</span>
@@ -21,72 +21,103 @@
         </div>
       </div>
 
-      <!-- Question List -->
-      <div class="space-y-4">
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+
+      <!-- Practice Exams List -->
+      <div v-else-if="practiceExams.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
-          v-for="(question, index) in questions"
-          :key="index"
-          class="card-glow cursor-pointer hover:scale-[1.02] transition-transform duration-200"
-          @click="startQuestion(question, index + 1)"
+          v-for="exam in practiceExams"
+          :key="exam.id"
+          class="card-glow cursor-pointer hover:scale-105 transition-transform duration-200"
+          @click="startPractice(exam)"
         >
-          <div class="flex items-start justify-between">
-            <div class="flex items-start space-x-4 flex-1">
-              <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span class="text-white font-bold">{{ index + 1 }}</span>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center space-x-2 mb-2">
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Question {{ index + 1 }}</h3>
-                  <span v-if="question.completed" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                    ✓ Completed
-                  </span>
-                </div>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ question.title }}</p>
-                <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                  <span>{{ question.marks }} marks</span>
-                  <span>{{ question.type }}</span>
-                  <span v-if="question.score !== null" class="font-semibold" :class="question.score >= 70 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'">
-                    Score: {{ question.score }}%
-                  </span>
-                </div>
-              </div>
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
             </div>
-            <svg class="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ exam.name }}</h3>
+              <p v-if="exam.description" class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ exam.description }}</p>
+              
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 rounded">
+                  {{ exam.duration_minutes }} minutes
+                </span>
+                <span v-if="exam.questions" class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-900/30 text-secondary-800 dark:text-secondary-300 rounded">
+                  {{ exam.questions.length }} questions
+                </span>
+                <span v-if="exam.completed" class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded">
+                  ✓ Completed
+                </span>
+              </div>
+
+              <button class="btn-primary text-sm">
+                {{ exam.completed ? 'Review Practice' : 'Start Practice' }}
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else class="card text-center py-12">
+        <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No practice questions available</h3>
+        <p class="text-gray-600 dark:text-gray-400">Practice questions will appear here once created by your administrator.</p>
       </div>
     </div>
   </Layout>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Layout from '@/components/Layout.vue';
+import api from '@/api/client';
 
-// Generate 50 sample questions
-const questions = ref(
-  Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    title: `Practice question ${i + 1} - Financial Analysis and Strategic Planning`,
-    marks: Math.floor(Math.random() * 15) + 5,
-    type: ['OCS', 'MCS', 'SCS'][Math.floor(Math.random() * 3)],
-    completed: Math.random() > 0.7,
-    score: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 60 : null
-  }))
-);
+const router = useRouter();
+const practiceExams = ref([]);
+const loading = ref(true);
 
-const answeredCount = computed(() => questions.value.filter(q => q.completed).length);
-const averageScore = computed(() => {
-  const completedQuestions = questions.value.filter(q => q.score !== null);
-  if (completedQuestions.length === 0) return 0;
-  const total = completedQuestions.reduce((sum, q) => sum + q.score, 0);
-  return Math.round(total / completedQuestions.length);
+onMounted(async () => {
+  await loadPracticeExams();
 });
 
-const startQuestion = (question, number) => {
-  // TODO: Navigate to question detail page
-  console.log('Starting question:', number);
+const loadPracticeExams = async () => {
+  loading.value = true;
+  try {
+    // TODO: Create practice questions API endpoint
+    // For now, using mock exams with practice flag or separate endpoint
+    const response = await api.get('/practice-exams');
+    if (response.data.success) {
+      practiceExams.value = response.data.data;
+    }
+  } catch (error) {
+    console.error('Failed to load practice exams:', error);
+    // Fallback to empty for now
+    practiceExams.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
+const answeredCount = computed(() => practiceExams.value.filter(q => q.completed).length);
+const averageScore = computed(() => {
+  const completedExams = practiceExams.value.filter(q => q.score !== null);
+  if (completedExams.length === 0) return 0;
+  const total = completedExams.reduce((sum, q) => sum + q.score, 0);
+  return Math.round(total / completedExams.length);
+});
+
+const startPractice = (exam) => {
+  // Navigate to unified question interface with practice type
+  router.push(`/exam/practice/${exam.id}`);
 };
 </script>
