@@ -21,7 +21,7 @@ class MockExamQuestion extends Model
 
     protected $casts = [
         'duration_minutes' => 'integer',
-        'marks' => 'integer',
+        'marks' => 'string',
         'order' => 'integer',
     ];
 

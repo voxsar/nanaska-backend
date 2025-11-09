@@ -3,6 +3,12 @@
 ## Overview
 This API provides endpoints for managing Mock Exams, separate from the Past Papers system. Mock exams can be linked to Pre-Seen documents and support student attempts with AI-powered marking.
 
+### Key Features
+- **Flexible Marking System**: Questions and sub-questions support string-based marks (e.g., "20", "2a", "2b") for flexible marking schemes
+- **Sub-Questions Support**: Questions can have multiple sub-questions, each with their own marks and text
+- **Pre-Seen Documents**: Mock exams can be linked to pre-seen documents for context
+- **Structured Questions**: Questions include context, reference material, and duration alongside the sub-questions
+
 ## API Endpoints
 
 All API endpoints are prefixed with `/api` and CSRF protection is disabled for external access.
@@ -72,9 +78,27 @@ GET /api/mock-exams/{id}/questions
       {
         "id": 1,
         "question_number": "1",
-        "question_text": "What is accounting?",
-        "marks": 10,
-        "order": 1
+        "context": "This is the context for question 1",
+        "reference_material": "Reference material here",
+        "duration_minutes": 30,
+        "marks": "20",
+        "order": 1,
+        "sub_questions": [
+          {
+            "id": 1,
+            "sub_question_number": "a",
+            "sub_question_text": "What is accounting?",
+            "marks": "5",
+            "order": 1
+          },
+          {
+            "id": 2,
+            "sub_question_number": "b",
+            "sub_question_text": "What is finance?",
+            "marks": "8",
+            "order": 2
+          }
+        ]
       }
     ]
   }
@@ -177,8 +201,10 @@ Access the admin panel at `/admin`
 ### MockExamQuestion
 - mock_exam_id (FK)
 - question_number
-- question_text
-- marks
+- context
+- reference_material
+- duration_minutes
+- marks (string - supports values like "20", "2a", "2b" for flexible marking)
 - order
 
 ### MockExamMarkingPrompt
@@ -187,6 +213,13 @@ Access the admin panel at `/admin`
 - prompt_text
 - is_active
 - version
+
+### MockExamSubQuestion
+- mock_exam_question_id (FK)
+- sub_question_number (e.g., "a", "b", "c", "i", "ii")
+- sub_question_text
+- marks (string - supports values like "5", "10", "2a" for flexible marking)
+- order
 
 ### MockExamMarkingPromptHistory
 - mock_exam_marking_prompt_id (FK)
@@ -262,6 +295,11 @@ MockExam
 
 MockExamQuestion
 ├── belongsTo MockExam
+├── hasMany MockExamSubQuestion
+└── hasMany MockExamAnswer
+
+MockExamSubQuestion
+├── belongsTo MockExamQuestion
 └── hasMany MockExamAnswer
 
 MockExamMarkingPrompt
@@ -276,6 +314,7 @@ MockExamAttempt
 MockExamAnswer
 ├── belongsTo MockExamAttempt
 ├── belongsTo MockExamQuestion
+├── belongsTo MockExamSubQuestion (nullable)
 └── belongsTo Student
 ```
 

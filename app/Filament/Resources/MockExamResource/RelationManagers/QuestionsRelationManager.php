@@ -34,8 +34,8 @@ class QuestionsRelationManager extends RelationManager
                     ->default(0),
                 Forms\Components\TextInput::make('marks')
                     ->required()
-                    ->numeric()
-                    ->default(0),
+                    ->maxLength(50)
+                    ->default('0'),
                 Forms\Components\TextInput::make('order')
                     ->required()
                     ->numeric()

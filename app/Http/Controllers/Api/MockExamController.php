@@ -54,7 +54,7 @@ class MockExamController extends Controller
      */
     public function show($id)
     {
-        $mockExam = MockExam::with(['questions', 'preSeenDocument', 'markingPrompts' => function ($query) {
+        $mockExam = MockExam::with(['questions.subQuestions', 'preSeenDocument', 'markingPrompts' => function ($query) {
             $query->where('is_active', true);
         }])
             ->findOrFail($id);
@@ -71,7 +71,10 @@ class MockExamController extends Controller
     public function questions($id)
     {
         $mockExam = MockExam::findOrFail($id);
-        $questions = $mockExam->questions()->orderBy('order')->get();
+        $questions = $mockExam->questions()
+            ->with('subQuestions')
+            ->orderBy('order')
+            ->get();
 
         return response()->json([
             'success' => true,
