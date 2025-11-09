@@ -16,4 +16,9 @@ class PreSeenDocument extends Model
         'company_name',
         'page_count',
     ];
+
+    public function practiceQuestions()
+    {
+        return $this->hasMany(PracticeQuestion::class);
+    }
 }

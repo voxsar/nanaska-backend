@@ -38,6 +38,11 @@ class Student extends Authenticatable implements CanResetPasswordContract
         return $this->hasMany(MarkingResult::class);
     }
 
+    public function practiceQuestionAttempts()
+    {
+        return $this->hasMany(PracticeQuestionAttempt::class);
+    }
+
     /**
      * Send the password reset notification.
      */

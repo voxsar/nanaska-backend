@@ -63,9 +63,11 @@ Route::get('/mock-exams/attempts/{studentId}', [MockExamController::class, 'stud
 Route::get('/pre-seen-documents', [PreSeenDocumentController::class, 'index']);
 Route::get('/pre-seen-documents/{id}', [PreSeenDocumentController::class, 'show']);
 
-// Practice Exams API Routes
-Route::get('/practice-exams', [PracticeExamController::class, 'index']);
-Route::get('/practice-exams/{id}/questions', [PracticeExamController::class, 'questions']);
+// Practice Questions API Routes (separate from mock exams)
+Route::get('/practice-questions', [PracticeExamController::class, 'index']);
+Route::get('/practice-questions/{id}', [PracticeExamController::class, 'show']);
+Route::post('/practice-questions/submit-answer', [PracticeExamController::class, 'submitAnswer']);
+Route::get('/practice-questions/attempts/{studentId}', [PracticeExamController::class, 'studentAttempts']);
 
 // Student Questions (Ask AI) Routes
 Route::get('/student-questions', [StudentQuestionController::class, 'index']);
