@@ -32,12 +32,17 @@ Route::post('/students/submit-answer', [StudentAnswerController::class, 'submit'
 
 Route::post('/marking-results', [MarkingResultController::class, 'receive']);
 
-// Student authentication routes
+// Student public auth routes
 Route::post('/students/login', [StudentController::class, 'login']);
 Route::post('/students/register', [StudentController::class, 'register']);
-Route::post('/students/logout', [StudentController::class, 'logout']);
 Route::post('/students/forgot-password', [StudentController::class, 'forgotPassword']);
 Route::post('/students/reset-password', [StudentController::class, 'resetPassword']);
+
+// Student protected routes
+Route::middleware('auth:student-api')->group(function () {
+    Route::post('/students/logout', [StudentController::class, 'logout']);
+    Route::get('/students/me', [StudentController::class, 'me']);
+});
 
 // Mock Exam API Routes (CSRF protected via Sanctum tokens)
 Route::post('/mock-exams/{mockExam}/questions', [MockExamQuestionController::class, 'store']);

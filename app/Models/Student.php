@@ -4,10 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use App\Notifications\StudentResetPasswordNotification;
 
-class Student extends Model
+class Student extends Authenticatable implements CanResetPasswordContract
 {
-    use HasFactory;
+     use HasApiTokens, HasFactory, Notifiable, CanResetPasswordTrait;
 
     /**
      * SECURITY NOTE: Plain text passwords are used by design per requirements.
@@ -30,5 +36,13 @@ class Student extends Model
     public function markingResults()
     {
         return $this->hasMany(MarkingResult::class);
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new StudentResetPasswordNotification($token));
     }
 }

@@ -5,22 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
     // auth student
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        $student = Student::where('email', $request->email)->first();
-
-     
-
-        $token = "D";//$student->createToken('student-token')->plainTextToken;
+        $student = Student::where('email', $credentials['email'])->first();
+        if (! $student || ! \Hash::check($credentials['password'], $student->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Invalid credentials'],
+            ]);
+        }
+        $token = $student->createToken('student-token')->plainTextToken;
 
         return response()->json([
             'student' => $student,
@@ -53,8 +58,11 @@ class StudentController extends Controller
     // logout student
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
+        /** @var Student $student */
+        $student = $request->user();
+        if ($student && $student->currentAccessToken()) {
+            $student->currentAccessToken()->delete();
+        }
         return response()->json(['message' => 'Logged out successfully']);
     }
 
@@ -65,33 +73,42 @@ class StudentController extends Controller
             'email' => 'required|email|exists:students,email',
         ]);
 
-        $student = Student::where('email', $request->email)->first();
+        $status = Password::broker('students')->sendResetLink(
+            $request->only('email')
+        );
 
-        // Generate a password reset token
-        $token = $student->createToken('password-reset-token')->plainTextToken;
-
-        // Send the password reset email (implementation not shown)
-        // Mail::to($student->email)->send(new PasswordResetMail($token));
-
-        return response()->json(['message' => 'Password reset email sent']);
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => __($status)]);
+        }
+        return response()->json(['message' => __($status)], 422);
     }
 
     public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required|string',
+            'email' => 'required|email|exists:students,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $student = Student::where('email', $request->email)->first();
+        $status = Password::broker('students')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (Student $student, $password) {
+                $student->forceFill([
+                    'password' => bcrypt($password),
+                ])->save();
+            }
+        );
 
-        if (! $student) {
-            return response()->json(['message' => 'Invalid token'], 400);
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => __($status)]);
         }
 
-        $student->password = bcrypt($request->password);
-        $student->save();
+        return response()->json(['message' => __($status)], 422);
+    }
 
-        return response()->json(['message' => 'Password reset successfully']);
+    public function me(Request $request)
+    {
+        return response()->json(['student' => $request->user()]);
     }
 }
