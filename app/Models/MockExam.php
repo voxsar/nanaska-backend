@@ -14,6 +14,8 @@ class MockExam extends Model
         'description',
         'pre_seen_document_id',
         'duration_minutes',
+        'file_path',
+        'marking_guide_file_path',
         'is_active',
     ];
 

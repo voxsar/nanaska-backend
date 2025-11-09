@@ -8,9 +8,31 @@ use App\Models\MockExamAnswer;
 use App\Models\MockExamAttempt;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class MockExamController extends Controller
 {
+    // send mock exam record including pdf to https://automation.artslabcreatives.com/webhook-test/mock-exams
+    public function sendMockExamRecord(MockExam $mockExam)
+    {
+        $client = new \GuzzleHttp\Client;
+        $response = $client->post('https://automation.artslabcreatives.com/webhook-test/mock-exams', [
+            'multipart' => [
+                [
+                    'name' => 'file',
+                    'contents' => fopen(storage_path('app/public/'.$mockExam->file_path), 'r'),
+                    'filename' => Str::snake($mockExam->name),
+                ],
+                [
+                    'name' => 'mockExamData',
+                    'contents' => json_encode($mockExam),
+                ],
+            ],
+        ]);
+
+        return $response;
+    }
+
     /**
      * List all active mock exams
      */
@@ -80,7 +102,7 @@ class MockExamController extends Controller
             ->where('password', $validated['student_password'])
             ->first();
 
-        if (!$student) {
+        if (! $student) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid credentials',

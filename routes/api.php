@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\StudentAnswerController;
 use App\Http\Controllers\Api\MarkingResultController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\MockExamController;
+use App\Http\Controllers\Api\MockExamQuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,8 @@ Route::post('/students/forgot-password', [StudentController::class, 'forgotPassw
 Route::post('/students/reset-password', [StudentController::class, 'resetPassword']);
 
 // Mock Exam API Routes (CSRF protected via Sanctum tokens)
+Route::post('/mock-exams/{mockExam}/questions', [MockExamQuestionController::class, 'store']);
+Route::post('/mock-exams/upload', [MockExamController::class, 'upload'])->name('mock-exams.upload');
 Route::get('/mock-exams', [MockExamController::class, 'index']);
 Route::get('/mock-exams/{id}', [MockExamController::class, 'show']);
 Route::get('/mock-exams/{id}/questions', [MockExamController::class, 'questions']);

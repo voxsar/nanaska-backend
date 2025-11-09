@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Novadaemon\FilamentPrettyJson\Form\PrettyJsonField;
 
 class QuestionsRelationManager extends RelationManager
 {
@@ -19,10 +20,19 @@ class QuestionsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('question_number')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('question_text')
-                    ->required()
+                Forms\Components\Textarea::make('reference_material')
                     ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Textarea::make('context')
+                    ->required()
+                    ->columnSpanFull(),
+				PrettyJsonField::make('question_text')
+					->required()
+					->columnSpanFull(),
+                Forms\Components\TextInput::make('duration_minutes')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
                 Forms\Components\TextInput::make('marks')
                     ->required()
                     ->numeric()
@@ -42,9 +52,15 @@ class QuestionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('question_number')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('reference_material')
+                    ->limit(50)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('question_text')
                     ->limit(50)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('duration_minutes')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('marks')
                     ->numeric()
                     ->sortable(),

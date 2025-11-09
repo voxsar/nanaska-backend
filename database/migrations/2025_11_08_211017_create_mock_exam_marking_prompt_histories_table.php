@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('mock_exam_marking_prompt_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mock_exam_marking_prompt_id')->constrained()->onDelete('cascade');
+			$table->unsignedBigInteger('mock_exam_marking_prompt_id');
+			$table->foreign('mock_exam_marking_prompt_id', 'mock_prompt_hist_fk')
+			->references('id')
+			->on('mock_exam_marking_prompts')
+			->onDelete('cascade');
+
             $table->text('prompt_text');
             $table->integer('version');
             $table->string('changed_by')->nullable();

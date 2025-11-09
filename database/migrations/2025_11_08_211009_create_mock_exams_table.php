@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('pre_seen_document_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('file_path')->nullable();
+            $table->string('marking_guide_file_path')->nullable();
             $table->integer('duration_minutes')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

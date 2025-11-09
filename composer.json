@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/slack-notification-channel": "^3.6",
         "laravel/tinker": "^2.8",
+        "novadaemon/filament-pretty-json": "^2.7",
         "spatie/laravel-backup": "^9.3"
     },
     "require-dev": {

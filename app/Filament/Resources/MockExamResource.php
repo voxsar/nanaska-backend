@@ -31,7 +31,7 @@ class MockExamResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('description')
-                    ->maxLength(65535)
+                    ->maxLength(1000)
                     ->columnSpanFull(),
                 Forms\Components\Select::make('pre_seen_document_id')
                     ->label('Pre-Seen Document')
@@ -39,6 +39,15 @@ class MockExamResource extends Resource
                     ->searchable()
                     ->preload()
                     ->nullable(),
+                Forms\Components\FileUpload::make('file_path')
+                    ->label('Mock Exam File')
+                    ->required()
+					->directory('mock-exams')
+                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),
+                Forms\Components\FileUpload::make('marking_guide_file_path')
+                    ->label('Marking Guide File')
+					->directory('mock-marking-exams')
+                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),
                 Forms\Components\TextInput::make('duration_minutes')
                     ->label('Duration (minutes)')
                     ->numeric()
