@@ -102,7 +102,7 @@
             </div>
           </router-link>
 
-          <router-link to="/theory-models" class="card-glow hover:scale-105 transition-transform duration-200">
+          <router-link to="/business-models" class="card-glow hover:scale-105 transition-transform duration-200">
             <div class="flex items-start space-x-4">
               <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +110,7 @@
                 </svg>
               </div>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Theory Models</h3>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Business Models</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">Apply SWOT, PEST, and more</p>
               </div>
             </div>
@@ -178,8 +178,8 @@
               <span class="text-white text-xs font-bold">✓</span>
             </div>
             <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">Theory Model Application</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Choose from 10 business theory models (SWOT, PEST, Porter's Five Forces, etc.) and apply them to your case studies.</p>
+              <h3 class="font-semibold text-gray-900 dark:text-white">Business Model Application</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Choose from 10 business models (SWOT, PEST, Porter's Five Forces, etc.) and apply them to your case studies.</p>
             </div>
           </div>
           <div class="flex items-start space-x-3">

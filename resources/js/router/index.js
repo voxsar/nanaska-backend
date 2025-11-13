@@ -51,9 +51,9 @@ const router = createRouter({
 			meta: { requiresAuth: true },
 		},
 		{
-			path: '/theory-models',
-			name: 'TheoryModels',
-			component: () => import('@/views/TheoryModels.vue'),
+			path: '/business-models',
+			name: 'BusinessModels',
+			component: () => import('@/views/BusinessModels.vue'),
 			beforeEnter: requireAuth,
 			meta: { requiresAuth: true },
 		},

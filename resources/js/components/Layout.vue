@@ -11,7 +11,7 @@
                 <span class="text-white font-bold text-xl">N</span>
               </div>
               <span class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                Nanaska AI
+                Nanaska Edge
               </span>
             </router-link>
 
@@ -111,7 +111,7 @@
     <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <p class="text-center text-sm text-gray-600 dark:text-gray-400">
-          © {{ new Date().getFullYear() }} Nanaska AI. Master preseen case studies with AI-powered learning.
+          © {{ new Date().getFullYear() }} Nanaska Edge. Master preseen case studies with AI-powered learning.
         </p>
       </div>
     </footer>
@@ -138,7 +138,7 @@ const navLinks = [
   { name: 'Dashboard', path: '/dashboard' },
   { name: 'Pre-seen', path: '/preseen' },
   { name: 'Questions', path: '/questions' },
-  { name: 'Theory Models', path: '/theory-models' },
+  { name: 'Business Models', path: '/business-models' },
   { name: 'Past Papers', path: '/past-papers' },
   { name: 'Practice', path: '/practice' },
   { name: 'Mock Exams', path: '/mock-exams' },
