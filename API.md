@@ -13,6 +13,10 @@ N8N_UPLOAD_URL=https://your-n8n-instance.com/webhook/upload
 
 # N8N Marking URL - Webhook URL for triggering AI marking workflow
 N8N_MARKING_URL=https://your-n8n-instance.com/webhook/marking
+
+# N8N Theory Model Analysis URLs - Webhook URLs for theory model analysis workflow
+N8N_ANALYSIS_MODEL_URL=https://your-n8n-instance.com/webhook/theory-analysis
+N8N_ANALYSIS_TEST_MODEL_URL=https://your-n8n-instance.com/webhook/theory-analysis-test
 ```
 
 ## API Endpoints
@@ -166,6 +170,107 @@ POST /api/marking-results
 }
 ```
 
+### Theory Models
+
+#### List Theory Models
+```
+GET /api/theory-models
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "SWOT Analysis",
+      "description": "Analyze Strengths, Weaknesses, Opportunities, and Threats",
+      "analysis_prompt": "You are a CIMA business analyst...",
+      "created_at": "2025-11-09T18:27:42.000000Z",
+      "updated_at": "2025-11-09T18:27:42.000000Z"
+    }
+  ]
+}
+```
+
+#### Get Theory Model Details
+```
+GET /api/theory-models/{id}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "SWOT Analysis",
+    "description": "Analyze Strengths, Weaknesses, Opportunities, and Threats",
+    "analysis_prompt": "You are a CIMA business analyst. Analyze the provided pre-seen document...",
+    "created_at": "2025-11-09T18:27:42.000000Z",
+    "updated_at": "2025-11-09T18:27:42.000000Z"
+  }
+}
+```
+
+#### Apply Theory Model
+```
+POST /api/theory-models/apply
+```
+
+**Request Body:**
+```json
+{
+  "theory_model_id": 1,
+  "pre_seen_document_id": 1,
+  "case_context": "Optional additional context for analysis",
+  "specific_questions": "Optional specific questions about the analysis"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Analysis request submitted to N8N",
+  "data": {
+    "theory_model": {
+      "id": 1,
+      "name": "SWOT Analysis",
+      "description": "Analyze Strengths, Weaknesses, Opportunities, and Threats",
+      "analysis_prompt": "...",
+      "created_at": "2025-11-09T18:27:42.000000Z",
+      "updated_at": "2025-11-09T18:27:42.000000Z"
+    },
+    "pre_seen_document": {
+      "id": 1,
+      "name": "Sample Pre-Seen Document",
+      "file_path": "documents/sample.pdf"
+    },
+    "case_context": "Optional additional context",
+    "specific_questions": "Optional questions"
+  },
+  "n8n_responses": [
+    {
+      "url": "https://your-n8n-instance.com/webhook/theory-analysis-test",
+      "status": 200
+    },
+    {
+      "url": "https://your-n8n-instance.com/webhook/theory-analysis",
+      "status": 200
+    }
+  ]
+}
+```
+
+**Notes:**
+- Theory models are predefined in the database (10 standard business analysis frameworks)
+- The `pre_seen_document_id` is optional - analysis can be done without a specific document
+- The analysis request is sent to both test and production N8N webhooks
+- Available theory models: SWOT Analysis, PEST Analysis, Porter's Five Forces, Ansoff Matrix, BCG Matrix, Value Chain Analysis, McKinsey 7S Framework, Balanced Scorecard, PESTLE Analysis, Stakeholder Analysis
+
+
 ## Filament Admin Panel
 
 Access the admin panel at `/admin`
@@ -186,7 +291,12 @@ Access the admin panel at `/admin`
    - Manage AI marking prompts
    - Version history tracking
 
-4. **Students** (Users > Students)
+4. **Theory Models** (Configuration > Theory Models)
+   - Manage business analysis theory models
+   - Edit model names, descriptions, and AI analysis prompts
+   - 10 pre-seeded models available
+
+5. **Students** (Users > Students)
    - Manage student accounts
    - Plain text passwords (no encryption)
 
@@ -249,6 +359,13 @@ Access the admin panel at `/admin`
 - version
 - parent_id (FK - for version history)
 
+### TheoryModel
+- name
+- description
+- analysis_prompt
+- created_at
+- updated_at
+
 ## Background Jobs
 
 ### TriggerMarkingJob
@@ -275,6 +392,23 @@ When clicking "Upload to N8N" button in Filament:
 3. N8N processes with AI
 4. N8N posts results to /api/marking-results
 5. ProcessMarkingResultJob stores results
+
+### Theory Model Analysis Workflow
+1. User selects theory model and optionally a pre-seen document via frontend
+2. Frontend posts to /api/theory-models/apply with:
+   - theory_model_id (required)
+   - pre_seen_document_id (optional)
+   - case_context (optional additional context)
+   - specific_questions (optional specific questions)
+3. Backend sends payload to both N8N_ANALYSIS_MODEL_URL and N8N_ANALYSIS_TEST_MODEL_URL with:
+   - theory_model_id
+   - theory_model_name
+   - analysis_prompt (the AI prompt for the selected theory model)
+   - case_context
+   - specific_questions
+   - pre_seen_document (if selected, includes id, name, file_path)
+4. N8N processes the analysis using the theory model's prompt and pre-seen document
+5. Results are returned directly in the API response
 
 ## Security Notes
 

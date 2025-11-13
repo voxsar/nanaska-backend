@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PreSeenDocumentController;
 use App\Http\Controllers\Api\PracticeExamController;
 use App\Http\Controllers\Api\PracticeMarkingResultController;
 use App\Http\Controllers\Api\StudentQuestionController;
+use App\Http\Controllers\Api\TheoryModelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,3 +82,8 @@ Route::get('/student-questions', [StudentQuestionController::class, 'index']);
 Route::post('/student-questions', [StudentQuestionController::class, 'store']);
 Route::get('/student-questions/{id}', [StudentQuestionController::class, 'show']);
 Route::post('/student-questions/{id}/response', [StudentQuestionController::class, 'response']);
+
+// Theory Models Routes
+Route::get('/theory-models', [TheoryModelController::class, 'index']);
+Route::get('/theory-models/{id}', [TheoryModelController::class, 'show']);
+Route::post('/theory-models/apply', [TheoryModelController::class, 'apply']);
