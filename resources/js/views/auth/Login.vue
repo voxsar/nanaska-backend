@@ -7,7 +7,7 @@
           <span class="text-white font-bold text-3xl">N</span>
         </div>
         <h2 class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-          Welcome to Nanaska AI
+          Welcome to Nanaska Edge
         </h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Master preseen case studies with AI-powered learning
