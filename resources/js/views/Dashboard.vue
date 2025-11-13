@@ -12,7 +12,7 @@
       </div>
 
       <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <div class="card-glow">
           <div class="flex items-center justify-between">
             <div>
@@ -30,22 +30,9 @@
         <div class="card-glow">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Mock Exams</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-            </div>
-            <div class="w-12 h-12 bg-gradient-to-br from-secondary-600 to-primary-600 rounded-lg flex items-center justify-center shadow-glow-blue">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-glow">
-          <div class="flex items-center justify-between">
-            <div>
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Average Score</p>
               <p class="text-2xl font-bold text-gray-900 dark:text-white">0%</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500">Level A answers</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center shadow-glow-purple">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,12 +45,40 @@
         <div class="card-glow">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Study Hours</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Time on Ask Questions</p>
               <p class="text-2xl font-bold text-gray-900 dark:text-white">0h</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-secondary-600 to-primary-600 rounded-lg flex items-center justify-center shadow-glow-blue">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-glow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Business Models Completed</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+            </div>
+            <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center shadow-glow-purple">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-glow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Time on Past Papers</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">0h</p>
+            </div>
+            <div class="w-12 h-12 bg-gradient-to-br from-secondary-600 to-primary-600 rounded-lg flex items-center justify-center shadow-glow-blue">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
               </svg>
             </div>
           </div>
@@ -125,7 +140,7 @@
               </div>
               <div>
                 <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Past Papers</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Review last 10 exam papers</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Review last 5 exam papers</p>
               </div>
             </div>
           </router-link>
@@ -188,7 +203,7 @@
             </div>
             <div>
               <h3 class="font-semibold text-gray-900 dark:text-white">Comprehensive Past Paper Analysis</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Access last 10 post-examiner guidelines with questions, answers, marking schemes, and examiner feedback.</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Access last 5 post-examiner guidelines with questions, answers, marking schemes, and examiner feedback.</p>
             </div>
           </div>
           <div class="flex items-start space-x-3">

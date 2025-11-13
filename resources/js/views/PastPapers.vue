@@ -7,7 +7,7 @@
       
       <div class="card mb-6">
         <p class="text-gray-600 dark:text-gray-400">
-          Access the last 10 post-examiner guidelines including past pre-seens, exam papers, student answers, marking schemes, and examiner feedback.
+          Access the last 5 post-examiner guidelines including past pre-seens, exam papers, student answers, marking schemes, and examiner feedback. Admins can add descriptions and students can ask questions about the papers.
         </p>
       </div>
 
