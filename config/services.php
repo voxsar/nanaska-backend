@@ -40,6 +40,10 @@ return [
 		'question_test_url' => env('N8N_QUESTION_TEST_URL'),
 		'ask_preseen_url' => env('N8N_ASK_PRESEEN_URL'),
 		'ask_preseen_test_url' => env('N8N_ASK_PRESEEN_TEST_URL'),
+		'practice_question_url' => env('N8N_PRACTICE_QUESTION_URL'),
+		'practice_question_test_url' => env('N8N_PRACTICE_QUESTION_TEST_URL'),
+		'practice_marking_url' => env('N8N_PRACTICE_MARKING_URL'),
+		'practice_marking_test_url' => env('N8N_PRACTICE_MARKING_TEST_URL'),
     ],
 
 ];
