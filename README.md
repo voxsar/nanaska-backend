@@ -1,65 +1,227 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Nanaska Backend - CIMA Exam Preparation Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel backend API with Filament admin panel for CIMA exam preparation, featuring AI-powered marking, mock exams, and practice questions.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Mock Exams**: Full exam papers with questions, sub-questions, and timed attempts
+- **Practice Questions**: Individual questions based on pre-seen documents for targeted practice
+- **AI-Powered Marking**: Automated marking via n8n workflows
+- **Pre-Seen Documents**: Upload and manage CIMA pre-seen materials
+- **Student Management**: Student authentication and progress tracking
+- **Filament Admin Panel**: Modern admin interface for content management
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Recent Updates
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Mock Exams vs Practice Questions Separation
 
-## Learning Laravel
+Mock exams and practice questions are now **completely separate** features with:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- ✅ Separate database tables and models
+- ✅ Separate API endpoints
+- ✅ Separate n8n webhook URLs
+- ✅ Separate admin interfaces
+- ✅ No data mixing or confusion
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**Key Differences:**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Feature | Mock Exams | Practice Questions |
+|---------|-----------|-------------------|
+| Structure | Full exam paper | Individual questions |
+| Context | Complete mock exam | Linked to pre-seen documents |
+| API | `/api/mock-exams/*` | `/api/practice-questions/*` |
+| Admin | Mock Exams section | Practice Questions section |
 
-## Laravel Sponsors
+See [SEPARATION_IMPLEMENTATION.md](SEPARATION_IMPLEMENTATION.md) for details.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Quick Start
 
-### Premium Partners
+### Installation
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+# Clone repository
+git clone https://github.com/voxsar/nanaska-backend.git
+cd nanaska-backend
+
+# Install dependencies
+composer install
+npm install
+
+# Configure environment
+cp .env.example .env
+php artisan key:generate
+
+# Run migrations
+php artisan migrate --seed
+
+# Build assets
+npm run build
+
+# Start server
+php artisan serve
+```
+
+### Access Points
+
+- **Frontend**: http://localhost:8000
+- **Admin Panel**: http://localhost:8000/admin
+  - Email: admin@nanaska.com
+  - Password: admin@nanaska.com@123
+
+## Environment Configuration
+
+Add these to your `.env` file:
+
+### Mock Exam URLs
+```env
+N8N_QUESTION_URL=https://automation.artslabcreatives.com/webhook/mock-exams
+N8N_MARKING_URL=https://automation.artslabcreatives.com/webhook/marking
+```
+
+### Practice Question URLs (separate from mock exams)
+```env
+N8N_PRACTICE_QUESTION_URL=https://automation.artslabcreatives.com/webhook/practice-questions
+N8N_PRACTICE_MARKING_URL=https://automation.artslabcreatives.com/webhook/practice-marking
+```
+
+See [.env.example](.env.example) for all configuration options.
+
+## Documentation
+
+- **[API Documentation](API.md)** - Complete API reference
+- **[Mock Exam API](MOCK_EXAM_API.md)** - Mock exam specific endpoints
+- **[Practice Questions API](PRACTICE_QUESTIONS_API.md)** - Practice question endpoints
+- **[Separation Implementation](SEPARATION_IMPLEMENTATION.md)** - Architecture decisions
+- **[Implementation Complete](IMPLEMENTATION_COMPLETE.md)** - Summary of changes
+- **[Frontend Integration](FRONTEND.md)** - Vue.js frontend guide
+- **[Testing Guide](TESTING_GUIDE.md)** - How to run tests
+
+## API Endpoints
+
+### Mock Exams
+```
+GET  /api/mock-exams
+GET  /api/mock-exams/{id}
+GET  /api/mock-exams/{id}/questions
+POST /api/mock-exams/submit-answer
+GET  /api/mock-exams/attempts/{studentId}
+```
+
+### Practice Questions (NEW)
+```
+GET  /api/practice-questions
+GET  /api/practice-questions/{id}
+POST /api/practice-questions/submit-answer
+GET  /api/practice-questions/attempts/{studentId}
+```
+
+### Pre-Seen Documents
+```
+GET /api/pre-seen-documents
+GET /api/pre-seen-documents/{id}
+```
+
+## Admin Panel Features
+
+Access at `/admin`:
+
+### Mock Exams Section
+- Mock Exams management
+- Mock Exam Questions
+- Mock Exam Sub Questions
+- Mock Exam Attempts
+- Mock Exam Marking Prompts
+
+### Practice Questions Section (NEW)
+- Practice Questions management
+- Linked to pre-seen documents
+- Student attempt tracking
+- Separate from mock exams
+
+### Documents Section
+- Pre-Seen Documents
+- Past Papers
+
+### Users Section
+- Students management
+
+## Testing
+
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test suite
+php artisan test tests/Feature/PracticeQuestionSeparationTest.php
+php artisan test tests/Feature/MockExamApiTest.php
+
+# Run with coverage
+php artisan test --coverage
+```
+
+## Tech Stack
+
+- **Framework**: Laravel 10
+- **Admin Panel**: Filament v3
+- **Authentication**: Laravel Sanctum
+- **Database**: MySQL
+- **Frontend**: Vue.js 3 + Vite
+- **Styling**: Tailwind CSS
+- **Automation**: n8n webhooks
+
+## Project Structure
+
+```
+app/
+├── Models/
+│   ├── MockExam.php
+│   ├── MockExamQuestion.php
+│   ├── PracticeQuestion.php         # NEW
+│   ├── PracticeQuestionAttempt.php  # NEW
+│   └── ...
+├── Http/Controllers/Api/
+│   ├── MockExamController.php
+│   ├── PracticeExamController.php   # Rewritten
+│   ├── PracticeMarkingResultController.php  # NEW
+│   └── ...
+├── Filament/Resources/
+│   ├── MockExamResource.php
+│   ├── PracticeQuestionResource.php # NEW
+│   └── ...
+database/migrations/
+├── 2025_11_08_*_create_mock_exam_*.php
+├── 2025_11_09_*_create_practice_question*.php  # NEW
+tests/Feature/
+├── MockExamApiTest.php
+├── PracticeQuestionSeparationTest.php  # NEW
+```
+
+## Development
+
+```bash
+# Run development server with hot reload
+npm run dev
+
+# Watch for file changes
+php artisan serve
+
+# Clear caches
+php artisan optimize:clear
+
+# Run queue worker (for background jobs)
+php artisan queue:work
+```
+
+## Security Notes
+
+⚠️ **Important**: Student passwords are stored in plain text by design (per requirements). This is NOT recommended for production systems.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Create feature branch from `main`
+2. Make your changes
+3. Run tests: `php artisan test`
+4. Submit pull request
 
 ## License
 

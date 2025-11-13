@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\MockExamController;
 use App\Http\Controllers\Api\MockExamQuestionController;
 use App\Http\Controllers\Api\PreSeenDocumentController;
 use App\Http\Controllers\Api\PracticeExamController;
+use App\Http\Controllers\Api\PracticeMarkingResultController;
 use App\Http\Controllers\Api\StudentQuestionController;
 use App\Http\Controllers\Api\TheoryModelController;
 use Illuminate\Http\Request;
@@ -64,9 +65,17 @@ Route::get('/mock-exams/attempts/{studentId}', [MockExamController::class, 'stud
 Route::get('/pre-seen-documents', [PreSeenDocumentController::class, 'index']);
 Route::get('/pre-seen-documents/{id}', [PreSeenDocumentController::class, 'show']);
 
-// Practice Exams API Routes
-Route::get('/practice-exams', [PracticeExamController::class, 'index']);
-Route::get('/practice-exams/{id}/questions', [PracticeExamController::class, 'questions']);
+// Practice Questions API Routes (separate from mock exams)
+Route::get('/practice-questions', [PracticeExamController::class, 'index']);
+Route::get('/practice-questions/{id}', [PracticeExamController::class, 'show']);
+Route::post('/practice-questions/submit-answer', [PracticeExamController::class, 'submitAnswer']);
+Route::get('/practice-questions/attempts/{studentId}', [PracticeExamController::class, 'studentAttempts']);
+
+// Practice Marking Results API Routes (separate from mock exam marking)
+Route::post('/practice-marking-results', [PracticeMarkingResultController::class, 'receive']);
+Route::get('/practice-marking-results/student/{studentId}', [PracticeMarkingResultController::class, 'studentResults']);
+Route::get('/practice-marking-results/attempt/{attemptId}', [PracticeMarkingResultController::class, 'attemptResult']);
+Route::get('/practice-marking-results/question/{questionId}', [PracticeMarkingResultController::class, 'questionResults']);
 
 // Student Questions (Ask AI) Routes
 Route::get('/student-questions', [StudentQuestionController::class, 'index']);

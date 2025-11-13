@@ -42,6 +42,10 @@ return [
 		'ask_preseen_test_url' => env('N8N_ASK_PRESEEN_TEST_URL'),
 		'analysis_model_url' => env('N8N_ANALYSIS_MODEL_URL'),
 		'analysis_test_model_url' => env('N8N_ANALYSIS_TEST_MODEL_URL'),
+		'practice_question_url' => env('N8N_PRACTICE_QUESTION_URL'),
+		'practice_question_test_url' => env('N8N_PRACTICE_QUESTION_TEST_URL'),
+		'practice_marking_url' => env('N8N_PRACTICE_MARKING_URL'),
+		'practice_marking_test_url' => env('N8N_PRACTICE_MARKING_TEST_URL'),
     ],
 
 ];
