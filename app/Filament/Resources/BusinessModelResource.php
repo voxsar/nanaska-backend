@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TheoryModelResource\Pages;
-use App\Filament\Resources\TheoryModelResource\RelationManagers;
-use App\Models\TheoryModel;
+use App\Filament\Resources\BusinessModelResource\Pages;
+use App\Filament\Resources\BusinessModelResource\RelationManagers;
+use App\Models\BusinessModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,15 +13,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TheoryModelResource extends Resource
+class BusinessModelResource extends Resource
 {
-    protected static ?string $model = TheoryModel::class;
+    protected static ?string $model = BusinessModel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
 
     protected static ?string $navigationGroup = 'Configuration';
 
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Business Models';
+
+    protected static ?string $modelLabel = 'Business Model';
+
+    protected static ?string $pluralModelLabel = 'Business Models';
 
     public static function form(Form $form): Form
     {
@@ -39,7 +45,7 @@ class TheoryModelResource extends Resource
                     ->maxLength(65535)
                     ->columnSpanFull()
                     ->rows(10)
-                    ->helperText('OpenAI prompt used to analyze pre-seen documents with this theory model'),
+                    ->helperText('Fill the model based on the pre-seen, information can be used from anywhere in the preseen'),
             ]);
     }
 
@@ -85,9 +91,9 @@ class TheoryModelResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTheoryModels::route('/'),
-            'create' => Pages\CreateTheoryModel::route('/create'),
-            'edit' => Pages\EditTheoryModel::route('/{record}/edit'),
+            'index' => Pages\ListBusinessModels::route('/'),
+            'create' => Pages\CreateBusinessModel::route('/create'),
+            'edit' => Pages\EditBusinessModel::route('/{record}/edit'),
         ];
     }
 }
