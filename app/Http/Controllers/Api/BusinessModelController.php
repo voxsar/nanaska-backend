@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PreSeenDocument;
-use App\Models\TheoryModel;
+use App\Models\BusinessModel;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class TheoryModelController extends Controller
+class BusinessModelController extends Controller
 {
     /**
-     * List all theory models
+     * List all business models
      */
     public function index()
     {
-        $models = TheoryModel::orderBy('name')->get();
+        $models = BusinessModel::orderBy('name')->get();
 
         return response()->json([
             'success' => true,
@@ -25,11 +25,11 @@ class TheoryModelController extends Controller
     }
 
     /**
-     * Get specific theory model details
+     * Get specific business model details
      */
     public function show($id)
     {
-        $model = TheoryModel::findOrFail($id);
+        $model = BusinessModel::findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -38,27 +38,27 @@ class TheoryModelController extends Controller
     }
 
     /**
-     * Apply theory model to case study
+     * Apply business model to case study
      */
     public function apply(Request $request)
     {
         $data = $request->validate([
-            'theory_model_id' => 'required|exists:theory_models,id',
+            'business_model_id' => 'required|exists:business_models,id',
             'pre_seen_document_id' => 'nullable|exists:pre_seen_documents,id',
             'case_context' => 'nullable|string',
             'specific_questions' => 'nullable|string',
         ]);
 
-        $theoryModel = TheoryModel::findOrFail($data['theory_model_id']);
+        $businessModel = BusinessModel::findOrFail($data['business_model_id']);
         $preSeenDocument = isset($data['pre_seen_document_id']) 
             ? PreSeenDocument::find($data['pre_seen_document_id']) 
             : null;
 
         // Prepare payload for N8N
         $payload = [
-            'theory_model_id' => $theoryModel->id,
-            'theory_model_name' => $theoryModel->name,
-            'analysis_prompt' => $theoryModel->analysis_prompt,
+            'business_model_id' => $businessModel->id,
+            'business_model_name' => $businessModel->name,
+            'analysis_prompt' => $businessModel->analysis_prompt,
             'case_context' => $data['case_context'] ?? '',
             'specific_questions' => $data['specific_questions'] ?? '',
             'pre_seen_document' => $preSeenDocument ? [
@@ -93,7 +93,7 @@ class TheoryModelController extends Controller
                     'body' => json_decode($response->getBody()->getContents(), true),
                 ];
             } catch (\Throwable $e) {
-                Log::error('TheoryModelController: failed sending analysis request', [
+                Log::error('BusinessModelController: failed sending analysis request', [
                     'url' => $url,
                     'error' => $e->getMessage(),
                 ]);
@@ -109,7 +109,7 @@ class TheoryModelController extends Controller
             'success' => true,
             'message' => 'Analysis request submitted to N8N',
             'data' => [
-                'theory_model' => $theoryModel,
+                'business_model' => $businessModel,
                 'pre_seen_document' => $preSeenDocument,
                 'case_context' => $data['case_context'] ?? null,
                 'specific_questions' => $data['specific_questions'] ?? null,

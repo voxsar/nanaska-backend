@@ -2,19 +2,19 @@
   <Layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Theory Models Application
+        Business Models Application
       </h1>
       
       <div class="card mb-6">
         <p class="text-gray-600 dark:text-gray-400">
-          Select a business theory model and apply it to your case study. The AI will analyze your pre-seen material using the selected framework and provide comprehensive insights.
+          Select a business model and apply it to your case study. The AI will analyze your pre-seen material using the selected framework and provide comprehensive insights.
         </p>
       </div>
 
-      <!-- Theory Models Grid -->
+      <!-- Business Models Grid -->
       <div v-if="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div 
-          v-for="model in theoryModels" 
+          v-for="model in businessModels" 
           :key="model.id"
           @click="selectModel(model)"
           class="card-glow cursor-pointer hover:scale-105 transition-all duration-200"
@@ -35,7 +35,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading theory models...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading business models...</p>
       </div>
 
       <!-- Application Form -->
@@ -128,7 +128,7 @@ import { ref, onMounted } from 'vue';
 import Layout from '@/components/Layout.vue';
 import api from '@/api/client';
 
-const theoryModels = ref([]);
+const businessModels = ref([]);
 const preSeenDocuments = ref([]);
 const selectedModel = ref(null);
 const selectedPreSeenId = ref(null);
@@ -139,7 +139,7 @@ const loading = ref(true);
 const analysisResult = ref('');
 const errorMessage = ref('');
 
-// Icon mapping for theory models
+// Icon mapping for business models
 const iconMap = {
   'SWOT Analysis': '⚖️',
   'PEST Analysis': '🌍',
@@ -157,16 +157,16 @@ const getModelIcon = (name) => {
   return iconMap[name] || '📋';
 };
 
-// Fetch theory models from API
-const fetchTheoryModels = async () => {
+// Fetch business models from API
+const fetchBusinessModels = async () => {
   try {
-    const response = await api.get('/theory-models');
+    const response = await api.get('/business-models');
     if (response.data.success) {
-      theoryModels.value = response.data.data;
+      businessModels.value = response.data.data;
     }
   } catch (error) {
-    console.error('Error fetching theory models:', error);
-    errorMessage.value = 'Failed to load theory models. Please refresh the page.';
+    console.error('Error fetching business models:', error);
+    errorMessage.value = 'Failed to load business models. Please refresh the page.';
   } finally {
     loading.value = false;
   }
@@ -196,26 +196,26 @@ const applyModel = async () => {
   analysisResult.value = '';
   
   try {
-    const response = await api.post('/theory-models/apply', {
-      theory_model_id: selectedModel.value.id,
+    const response = await api.post('/business-models/apply', {
+      business_model_id: selectedModel.value.id,
       pre_seen_document_id: selectedPreSeenId.value,
       case_context: caseContext.value,
       specific_questions: specificQuestions.value,
     });
 
     if (response.data.success) {
-      analysisResult.value = `Analysis request submitted successfully!\n\nTheory Model: ${selectedModel.value.name}\n\nThe analysis is being processed by our AI system. Results will be available shortly.\n\nN8N Response Status: ${response.data.n8n_responses.map(r => r.status || 'submitted').join(', ')}`;
+      analysisResult.value = `Analysis request submitted successfully!\n\nBusiness Model: ${selectedModel.value.name}\n\nThe analysis is being processed by our AI system. Results will be available shortly.\n\nN8N Response Status: ${response.data.n8n_responses.map(r => r.status || 'submitted').join(', ')}`;
     }
   } catch (error) {
     console.error('Error applying model:', error);
-    errorMessage.value = error.response?.data?.message || 'Failed to apply theory model. Please try again.';
+    errorMessage.value = error.response?.data?.message || 'Failed to apply business model. Please try again.';
   } finally {
     applying.value = false;
   }
 };
 
 onMounted(() => {
-  fetchTheoryModels();
+  fetchBusinessModels();
   fetchPreSeenDocuments();
 });
 </script>
